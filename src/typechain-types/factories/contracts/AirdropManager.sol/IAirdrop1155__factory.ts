@@ -89,6 +89,51 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getAirdropInfo",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "string",
+            name: "airdropName",
+            type: "string",
+          },
+          {
+            internalType: "address",
+            name: "airdropAddress",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "totalAirdropAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "airdropAmountLeft",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "claimAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "expirationDate",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct AirdropInfo",
+        name: "info",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getBalance",
     outputs: [
       {
