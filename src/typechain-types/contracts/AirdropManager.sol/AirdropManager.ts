@@ -20,16 +20,6 @@ import type {
   TypedContractMethod,
 } from "../../common";
 
-export type AirdropStruct = {
-  airdropAddress: AddressLike;
-  airdropName: string;
-};
-
-export type AirdropStructOutput = [
-  airdropAddress: string,
-  airdropName: string
-] & { airdropAddress: string; airdropName: string };
-
 export interface AirdropManagerInterface extends Interface {
   getFunction(
     nameOrSignature:
@@ -42,7 +32,6 @@ export interface AirdropManagerInterface extends Interface {
       | "disallowAddresses"
       | "getAirdropAmountLeft"
       | "getAirdrops"
-      | "getAirdropsHistory"
       | "getBalance"
       | "getClaimAmount"
       | "getExpirationDate"
@@ -61,7 +50,7 @@ export interface AirdropManagerInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addAirdrop",
-    values: [AddressLike, string]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "allowAddress",
@@ -89,10 +78,6 @@ export interface AirdropManagerInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAirdrops",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAirdropsHistory",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -161,10 +146,6 @@ export interface AirdropManagerInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getAirdrops",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getAirdropsHistory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
@@ -240,7 +221,7 @@ export interface AirdropManager extends BaseContract {
   addAdmin: TypedContractMethod<[_newAdmin: AddressLike], [void], "nonpayable">;
 
   addAirdrop: TypedContractMethod<
-    [airdropAddress: AddressLike, airdropName: string],
+    [newAirdropAddress: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -281,9 +262,7 @@ export interface AirdropManager extends BaseContract {
     "view"
   >;
 
-  getAirdrops: TypedContractMethod<[], [AirdropStructOutput[]], "view">;
-
-  getAirdropsHistory: TypedContractMethod<[], [AirdropStructOutput[]], "view">;
+  getAirdrops: TypedContractMethod<[], [string[]], "view">;
 
   getBalance: TypedContractMethod<
     [airdropAddress: AddressLike],
@@ -347,7 +326,7 @@ export interface AirdropManager extends BaseContract {
   getFunction(
     nameOrSignature: "addAirdrop"
   ): TypedContractMethod<
-    [airdropAddress: AddressLike, airdropName: string],
+    [newAirdropAddress: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -391,10 +370,7 @@ export interface AirdropManager extends BaseContract {
   ): TypedContractMethod<[airdropAddress: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "getAirdrops"
-  ): TypedContractMethod<[], [AirdropStructOutput[]], "view">;
-  getFunction(
-    nameOrSignature: "getAirdropsHistory"
-  ): TypedContractMethod<[], [AirdropStructOutput[]], "view">;
+  ): TypedContractMethod<[], [string[]], "view">;
   getFunction(
     nameOrSignature: "getBalance"
   ): TypedContractMethod<[airdropAddress: AddressLike], [bigint], "view">;

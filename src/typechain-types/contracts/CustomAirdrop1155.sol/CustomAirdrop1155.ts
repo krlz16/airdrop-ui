@@ -23,6 +23,31 @@ import type {
   TypedContractMethod,
 } from "../../common";
 
+export type AirdropInfoStruct = {
+  airdropName: string;
+  airdropAddress: AddressLike;
+  totalAirdropAmount: BigNumberish;
+  airdropAmountLeft: BigNumberish;
+  claimAmount: BigNumberish;
+  expirationDate: BigNumberish;
+};
+
+export type AirdropInfoStructOutput = [
+  airdropName: string,
+  airdropAddress: string,
+  totalAirdropAmount: bigint,
+  airdropAmountLeft: bigint,
+  claimAmount: bigint,
+  expirationDate: bigint
+] & {
+  airdropName: string;
+  airdropAddress: string;
+  totalAirdropAmount: bigint;
+  airdropAmountLeft: bigint;
+  claimAmount: bigint;
+  expirationDate: bigint;
+};
+
 export interface CustomAirdrop1155Interface extends Interface {
   getFunction(
     nameOrSignature:
@@ -32,6 +57,7 @@ export interface CustomAirdrop1155Interface extends Interface {
       | "disallowAddress"
       | "disallowAddresses"
       | "getAirdropAmountLeft"
+      | "getAirdropInfo"
       | "getBalance"
       | "getClaimAmount"
       | "getExpirationDate"
@@ -74,6 +100,10 @@ export interface CustomAirdrop1155Interface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAirdropAmountLeft",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAirdropInfo",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -145,6 +175,10 @@ export interface CustomAirdrop1155Interface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getAirdropAmountLeft",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAirdropInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
@@ -307,6 +341,8 @@ export interface CustomAirdrop1155 extends BaseContract {
 
   getAirdropAmountLeft: TypedContractMethod<[], [bigint], "view">;
 
+  getAirdropInfo: TypedContractMethod<[], [AirdropInfoStructOutput], "view">;
+
   getBalance: TypedContractMethod<[], [bigint], "view">;
 
   getClaimAmount: TypedContractMethod<[], [bigint], "view">;
@@ -369,6 +405,9 @@ export interface CustomAirdrop1155 extends BaseContract {
   getFunction(
     nameOrSignature: "getAirdropAmountLeft"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getAirdropInfo"
+  ): TypedContractMethod<[], [AirdropInfoStructOutput], "view">;
   getFunction(
     nameOrSignature: "getBalance"
   ): TypedContractMethod<[], [bigint], "view">;
