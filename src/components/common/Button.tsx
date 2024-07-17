@@ -21,7 +21,7 @@ const Button: React.FC<ButtonProps> = ({
   icon,
   children,
   variant = 'primary',
-  rounded = false,
+  rounded = true,
   outline = false,
   className,
   height = 36,

@@ -8,7 +8,7 @@ const ConnectWalletButton: React.FC = () => {
   const [dialog, setDialog] = useState<boolean>(false)
 
   return (
-    <div className="">
+    <>
       {dialog && (
         <ConnectWalletDialog
           closeDialog={() => setDialog(false)}
@@ -16,7 +16,6 @@ const ConnectWalletButton: React.FC = () => {
         />
       )}
       <Button
-        rounded
         variant='primary'
         outline
         onClick={() => setDialog(true)}
@@ -26,7 +25,7 @@ const ConnectWalletButton: React.FC = () => {
           <MetamaskIcon className="w-5 mr-2" /> Connect wallet
         </span>
       </Button>
-    </div>
+    </>
   )
 }
 

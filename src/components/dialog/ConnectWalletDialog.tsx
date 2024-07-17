@@ -10,17 +10,16 @@ type props = {
 }
 
 function ConnectWalletDialog({ closeDialog, open }: props) {
-  const { login, web3Provider, isError, setIsError } = useConnectWallet()
-  const { isLoggedIn, login: authLogin } = useAuth()
+  const { login, isError, setIsError } = useConnectWallet()
+  const { address } = useAuth()
 
   useEffect(() => {
     init()
-    if (isLoggedIn) {
-      authLogin(web3Provider!)
+    if (address) {
       closeDialog()
       setIsError(false)
     }
-  }, [isLoggedIn, authLogin])
+  }, [address])
 
   const init = () => {
     setIsError(false)

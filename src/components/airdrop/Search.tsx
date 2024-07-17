@@ -7,9 +7,11 @@ function Search() {
     <div className="border border-white rounded-full flex px-3 gap-2 items-center">
       <SearchIcon className="h-10" />
       <Input
-        className='text-xl'
+        value={''}
+        onChange={() => null}
+        className='text-xl outline-none'
         border={false}
-        placeholder='Search runes'
+        placeholder='Search airdrop'
       />
     </div>
   )

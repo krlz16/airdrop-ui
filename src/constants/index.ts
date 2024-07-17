@@ -1,0 +1,10 @@
+
+
+export const AIRDROP_MANAGER_ADDRESS = process.env.NEXT_PUBLIC_AIRDROP_MANAGER_ADDRESS;
+
+export const FETCH_STATUS = {
+  INIT: 1,
+  LOADING: 2,
+  COMPLETED: 3,
+  ERROR: 4,
+}

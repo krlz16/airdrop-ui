@@ -18,13 +18,13 @@ type props = {
 
 function AirdropCard({ progressValue = 0, background, onClick, dialog = false, airdrop }: props) {
   const [deleteDialog, setDeleteDialog] = useState<boolean>(false);
-  const { address } = useAuth();
+  const { isAdmin } = useAuth();
   return (
     <>
       <DeleteAirdropDialog open={deleteDialog} closeDialog={() => setDeleteDialog(false)} airdrop={airdrop}/>
       <article className={`rounded-[20px] justify-between gap-2 relative ${dialog ? ' w-full' : 'border border-white p-7 w-[400px]'}`}>
         {
-          (!dialog && address) && 
+          (!dialog && isAdmin) && 
             <Button
               onClick={() => setDeleteDialog(true)}
               className='!absolute -top-3 right-0 px-2 group'

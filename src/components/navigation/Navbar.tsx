@@ -3,6 +3,7 @@ import logo from '@/app/assets/img/logo.svg';
 import ConnectWalletButton from './ConnectWalletButton';
 import { useAuth } from '@/context/AuthContext';
 import MetamaskIcon from '../icons/MetamaskIcon';
+import Image from 'next/image';
 
 function Navbar() {
   const { address, logout } = useAuth();
@@ -13,7 +14,7 @@ function Navbar() {
   }
   return (
     <nav className="w-full p-6 flex justify-between">
-      <img src={logo.src} alt="logo" />
+      <Image src={logo.src} alt="logo" style={{ width: 'auto', height: 'auto' }} width={170} height={100}  />
       {address ? (
         <div className="flex gap-4">
           <div className="bg-white flex items-center gap-4 rounded-md text-black px-2 py-1">

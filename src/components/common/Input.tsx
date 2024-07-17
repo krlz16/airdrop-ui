@@ -1,19 +1,24 @@
 import { classNames } from "@/utils/ClassNames"
+import { ChangeEventHandler } from "react"
 
 type props = {
   placeholder: string
   type?: string
   className?: string
   border?: boolean
-  height?: number,
+  height?: number
   id?: string | undefined
+  value: string | number | readonly string[] | undefined
+  onChange: ChangeEventHandler<HTMLInputElement> | undefined
 }
 function Input({
   placeholder, type = 'text',
   className,
   border = true,
   height = 36,
-  id = undefined
+  id = undefined,
+  value,
+  onChange
   }: props
   ) {
 
@@ -22,6 +27,7 @@ function Input({
 
   return (
     <input
+      value={value}
       style={{ height }}
       className={`${className} ${classNames(
         baseStyles,
@@ -30,6 +36,7 @@ function Input({
       type={type}
       placeholder={placeholder}
       id={id}
+      onChange={onChange}
     />
   )
 }

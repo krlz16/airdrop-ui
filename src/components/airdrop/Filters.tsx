@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext'
 
 function Filters() {
   const [dialog, setDialog] = useState<boolean>(false);
-  const { address } = useAuth();
+  const { isAdmin } = useAuth();
   return (
     <>
       <AddAirdropDialog open={dialog} closeDialog={() => setDialog(false)} />
@@ -15,7 +15,7 @@ function Filters() {
         <div className='flex gap-2'>
           <Search />
           {
-            address &&
+            isAdmin &&
             <Button
               onClick={() => setDialog(true)}
               outline
