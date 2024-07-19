@@ -14,6 +14,8 @@ type ButtonProps = {
   width?: number
   height?: number
   onClick: React.MouseEventHandler<HTMLButtonElement> | undefined
+  disabled?: boolean
+  show?: boolean
 };
 
 const Button: React.FC<ButtonProps> = ({
@@ -26,8 +28,11 @@ const Button: React.FC<ButtonProps> = ({
   className,
   height = 36,
   width = 140,
-  onClick
+  onClick,
+  disabled = false,
+  show = true
 }) => {
+  if (!show) return;
   const baseStyles = 'px-4 font-semibold focus:outline-none transition-colors flex justify-center items-center';
   
   const sizeStyles = size === 'large' ? 'text-lg' : 'text-sm';
@@ -39,13 +44,15 @@ const Button: React.FC<ButtonProps> = ({
 
   const outlineStyles = outline ? 'border' : '';
   const roundedStyles = rounded ? 'rounded-full' : 'rounded';
+  // const isDisabled = disabled ? 'disa'
 
 
   return (
     <button
+      disabled={disabled}
       onClick={onClick}
       style={{ width, height }}
-      className={`relative ${className} ${classNames(
+      className={`relative disabled:bg-zinc-800 disabled:border-transparent disabled:text-zinc-300 disabled:cursor-not-allowed disabled:font-medium ${className} ${classNames(
         baseStyles,
         sizeStyles,
         variantStyles[variant],
@@ -54,7 +61,7 @@ const Button: React.FC<ButtonProps> = ({
       )}
       `}
     >
-      {outline && (
+      {(outline && !disabled) && (
         <span
           style={{ width, height }}
           className={`${classNames(

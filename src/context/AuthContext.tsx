@@ -1,4 +1,5 @@
 'use client'
+import { IAirdrop } from '@/hooks/useAirdrop'
 import { ethers } from 'ethers'
 import React, {
   createContext,
@@ -15,6 +16,8 @@ interface AuthContextType {
   setAddress: React.Dispatch<React.SetStateAction<string>>
   setProvider: React.Dispatch<React.SetStateAction<ethers.BrowserProvider | undefined>>
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>
+  setAirdrop: React.Dispatch<React.SetStateAction<IAirdrop | undefined>>
+  airdrop: IAirdrop | undefined
   isAdmin: boolean
 }
 
@@ -24,6 +27,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [address, setAddress] = useState<string>('');
+  const [airdrop, setAirdrop] = useState<IAirdrop>();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [provider, setProvider] = useState<ethers.BrowserProvider | undefined>(
     undefined
@@ -44,6 +48,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         setProvider,
         address,
         setAddress,
+        airdrop,
+        setAirdrop
       }}
     >
       {children}

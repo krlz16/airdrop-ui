@@ -16,7 +16,6 @@ function AirdropContainer() {
             <AirdropItem
               airdrop={air}
               key={i}
-              progressValue={air.progress}
               background={`${colors[i % colors.length]}`}
             />
           )

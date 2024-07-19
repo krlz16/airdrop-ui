@@ -4,7 +4,12 @@ import MetamaskIcon from '../icons/MetamaskIcon'
 import ConnectWalletDialog from '../dialog/ConnectWalletDialog'
 import Button from '../common/Button'
 
-const ConnectWalletButton: React.FC = () => {
+type props = {
+  title?: string
+  width?: number
+}
+
+const ConnectWalletButton = ({ title = 'Connect wallet', width = 200 }: props) => {
   const [dialog, setDialog] = useState<boolean>(false)
 
   return (
@@ -19,10 +24,10 @@ const ConnectWalletButton: React.FC = () => {
         variant='primary'
         outline
         onClick={() => setDialog(true)}
-        width={200}
+        width={width}
       >
         <span className='flex justify-center items-center'>
-          <MetamaskIcon className="w-5 mr-2" /> Connect wallet
+          <MetamaskIcon className="w-5 mr-2" /> { title }
         </span>
       </Button>
     </>
