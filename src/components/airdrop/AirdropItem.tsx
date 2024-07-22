@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
+import { useAuth } from '@/context/AuthContext'
+import { IAirdrop } from '@/interface/IAirdrop'
+import DeleteAirdropDialog from '../dialog/DeleteAirdropDialog'
 import AirdropDialog from '../dialog/AirdropDialog'
 import AirdropCard from './AirdropCard'
-import { IAirdrop } from '@/hooks/useAirdrop'
-import DeleteAirdropDialog from '../dialog/DeleteAirdropDialog'
-import { useAuth } from '@/context/AuthContext'
 
 type props = {
   background: string
-  airdrop: IAirdrop
+  airdrop: IAirdrop 
 }
 
 function AirdropItem({ background, airdrop }: props) {
@@ -16,7 +16,7 @@ function AirdropItem({ background, airdrop }: props) {
   const { setAirdrop } = useAuth();
   return (
     <>
-      <DeleteAirdropDialog open={deleteDialog} closeDialog={() => setDeleteDialog(false)} airdrop={airdrop}/>
+      <DeleteAirdropDialog open={deleteDialog} closeDialog={() => setDeleteDialog(false)} />
       <AirdropDialog open={dialog} closeDialog={() => setDialog(false)} />
       <AirdropCard
         airdrop={airdrop}

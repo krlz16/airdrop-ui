@@ -5,7 +5,6 @@ function MetamaskIcon({ className }: { className?: string }) {
     <svg
       className={className}
       width="256px"
-      height="240px"
       viewBox="0 0 256 240"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"

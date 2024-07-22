@@ -11,7 +11,7 @@ type props = {
   closeDialog: Function
 }
 function AddAirdropDialog({ open, closeDialog }: props) {
-  const { isLoading, addAirdrop, setIsLoading } = useAirdrop();
+  const { isLoading, addAirdrop, setIsLoading, getAllAirdrops } = useAirdrop();
   const [contractAddress, setContractAddress] = useState<string>('');
   const handleAddAirdrop = () => {
     if (!contractAddress) return
@@ -23,6 +23,10 @@ function AddAirdropDialog({ open, closeDialog }: props) {
     setContractAddress('');
   }
   const handleReset = () => {
+    if (isLoading === FETCH_STATUS.COMPLETED) {
+      closeDialog();
+      getAllAirdrops();
+    }
     setIsLoading(FETCH_STATUS.INIT);
   }
   return (

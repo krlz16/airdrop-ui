@@ -15,8 +15,8 @@ type props = {
 function AirdropDialog({ open, closeDialog }: props) {
   const [menu, setMenu] = useState<'airdrop'| 'allow'>('airdrop');
   const [walletAddress, setWalletAddress] = useState<string>('');
-  const { isAdmin, airdrop, address } = useAuth();
-  const { allowedAddress, isLoading, setIsLoading } = useAirdrop();
+  const { isAdmin, airdrop } = useAuth();
+  const { allowedAddress, isLoading, setIsLoading, claim, getAllAirdrops } = useAirdrop();
 
   const handleAllowedAddress = () => {
     if (!walletAddress) return
@@ -30,10 +30,15 @@ function AirdropDialog({ open, closeDialog }: props) {
     setWalletAddress('');
   }
   const handleReset = () => {
+    if (isLoading === FETCH_STATUS.COMPLETED) {
+      closeDialog();
+      getAllAirdrops();
+    }
     setIsLoading(FETCH_STATUS.INIT);
+    setWalletAddress('');
   }
   return (
-    <BaseDialog open={open} closeDialog={handleCloseDialog} className={`w-[450px] ${isAdmin ? 'h-[410px]' : 'min-h-[360px]'}`}>
+    <BaseDialog open={open} closeDialog={handleCloseDialog} className={`w-[450px] ${isAdmin ? 'h-[410px]' : 'min-h-[360px]'} ${isLoading !== FETCH_STATUS.INIT && 'h-[360px]'}`}>
       <div className={`w-full h-full flex flex-col ${!isAdmin && 'pt-4'}`}>
         {
           isAdmin && 
@@ -52,11 +57,20 @@ function AirdropDialog({ open, closeDialog }: props) {
         }
         {
           menu === 'airdrop' ?
-          <AirdropCard
-            airdrop={airdrop!}
-            dialog={true}
-            onClick={() => handleCloseDialog()}
-          />
+            <ContentDialog
+              initialContent={
+                <AirdropCard
+                  airdrop={airdrop!}
+                  dialog={true}
+                  onClick={() => claim(airdrop?.address!)}
+                />
+              }
+              status={isLoading}
+              loadingTitle='Claiming tokens'
+              createdTitle='You have claimed your tokens'
+              onClose={() => handleReset()}
+              btnError='try again'
+            />
           :
           <ContentDialog
             initialContent={

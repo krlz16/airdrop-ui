@@ -1,9 +1,11 @@
-import { FETCH_STATUS } from '@/constants'
+import { EXPLORER, FETCH_STATUS } from '@/constants'
 import React from 'react'
 import Button from '../common/Button'
+import useAirdrop from '@/hooks/useAirdrop'
+import { useAuth } from '@/context/AuthContext'
 
 type props = {
-  status: number
+  status: string
   onClose: React.MouseEventHandler<HTMLButtonElement> | undefined
   loadingTitle: string
   createdTitle: string
@@ -11,16 +13,28 @@ type props = {
   btnError?: string
 }
 function ContentDialog({ status, onClose, loadingTitle, createdTitle, initialContent, btnError = 'Close' }: props) {
+  const { tx } = useAuth();
+  console.log('tx: ', tx);
   return (
-    <div className='flex flex-col justify-center w-full h-full items-center'>
+    <div className='flex flex-col justify-center w-full h-full items-center flex-1'>
       { status === FETCH_STATUS.INIT && initialContent}
       {
-        status === FETCH_STATUS.LOADING &&
+        status === FETCH_STATUS.WAIT_WALLET &&
         <>
-          <h2 className='bg-custom-pink px-2 text-2xl text-black w-max text-center font-bold mb-10'>
-            { loadingTitle }
+          <h2 className='bg-custom-orange px-2 text-2xl text-black w-max text-center font-bold mb-10'>
+            Confirm in your wallet
           </h2>
-          <div className='animate-spin border-r border-r-white w-16 h-16 rounded-full'></div>
+          <div className='animate-spin border-r border-r-white w-16 h-16 rounded-full mt-4'></div>
+        </>
+      }
+      {
+        status === FETCH_STATUS.WAIT_TX &&
+        <>
+          <h2 className='bg-custom-orange px-2 text-2xl text-black w-max text-center font-bold'>
+          { loadingTitle }
+          </h2>
+          <a href={`${EXPLORER}/tx/${tx?.hash}`} target="_blank" rel="noopener noreferrer" className='my-10 underline'>see transaction</a>
+          <div className='animate-spin border-r border-r-white w-16 h-16 rounded-full mt-4'></div>
         </>
       }
       {

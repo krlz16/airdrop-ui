@@ -1,5 +1,6 @@
 'use client'
-import { IAirdrop } from '@/hooks/useAirdrop'
+import { IAirdrop } from '@/interface/IAirdrop'
+import { ContractTransactionResponse } from 'ethers'
 import { ethers } from 'ethers'
 import React, {
   createContext,
@@ -16,9 +17,17 @@ interface AuthContextType {
   setAddress: React.Dispatch<React.SetStateAction<string>>
   setProvider: React.Dispatch<React.SetStateAction<ethers.BrowserProvider | undefined>>
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>
+  isAdmin: boolean
+  setAirdropLoading: React.Dispatch<React.SetStateAction<boolean>>
+  airdropLoading: boolean
   setAirdrop: React.Dispatch<React.SetStateAction<IAirdrop | undefined>>
   airdrop: IAirdrop | undefined
-  isAdmin: boolean
+  setAirdropDialog: React.Dispatch<React.SetStateAction<boolean>>
+  airdropDialog: boolean
+  setDeleteDialog: React.Dispatch<React.SetStateAction<boolean>>
+  deleteDialog: boolean
+  setTx: React.Dispatch<React.SetStateAction<ContractTransactionResponse | undefined>>
+  tx: ContractTransactionResponse | undefined
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -29,6 +38,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [address, setAddress] = useState<string>('');
   const [airdrop, setAirdrop] = useState<IAirdrop>();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [airdropLoading, setAirdropLoading] = useState<boolean>(false);
+  const [deleteDialog, setDeleteDialog] = useState<boolean>(false);
+  const [airdropDialog, setAirdropDialog] = useState<boolean>(false);
+  const [tx, setTx] = useState<ContractTransactionResponse>();
+
   const [provider, setProvider] = useState<ethers.BrowserProvider | undefined>(
     undefined
   )
@@ -49,7 +63,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         address,
         setAddress,
         airdrop,
-        setAirdrop
+        setAirdrop,
+        airdropDialog,
+        setAirdropDialog,
+        deleteDialog,
+        setDeleteDialog,
+        setTx,
+        tx,
+        setAirdropLoading,
+        airdropLoading,
       }}
     >
       {children}
