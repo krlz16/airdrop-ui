@@ -22,12 +22,10 @@ interface AuthContextType {
   airdropLoading: boolean
   setAirdrop: React.Dispatch<React.SetStateAction<IAirdrop | undefined>>
   airdrop: IAirdrop | undefined
-  setAirdropDialog: React.Dispatch<React.SetStateAction<boolean>>
-  airdropDialog: boolean
-  setDeleteDialog: React.Dispatch<React.SetStateAction<boolean>>
-  deleteDialog: boolean
   setTx: React.Dispatch<React.SetStateAction<ContractTransactionResponse | undefined>>
   tx: ContractTransactionResponse | undefined
+  setAirdrops: React.Dispatch<React.SetStateAction<IAirdrop[] | undefined>>
+  airdrops: IAirdrop[] | undefined
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -39,9 +37,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [airdrop, setAirdrop] = useState<IAirdrop>();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [airdropLoading, setAirdropLoading] = useState<boolean>(false);
-  const [deleteDialog, setDeleteDialog] = useState<boolean>(false);
-  const [airdropDialog, setAirdropDialog] = useState<boolean>(false);
   const [tx, setTx] = useState<ContractTransactionResponse>();
+  const [airdrops, setAirdrops] = useState<IAirdrop[]>();
 
   const [provider, setProvider] = useState<ethers.BrowserProvider | undefined>(
     undefined
@@ -64,14 +61,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         setAddress,
         airdrop,
         setAirdrop,
-        airdropDialog,
-        setAirdropDialog,
-        deleteDialog,
-        setDeleteDialog,
         setTx,
         tx,
         setAirdropLoading,
         airdropLoading,
+        airdrops,
+        setAirdrops
       }}
     >
       {children}

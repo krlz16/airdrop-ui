@@ -14,7 +14,6 @@ type props = {
 }
 function ContentDialog({ status, onClose, loadingTitle, createdTitle, initialContent, btnError = 'Close' }: props) {
   const { tx } = useAuth();
-  console.log('tx: ', tx);
   return (
     <div className='flex flex-col justify-center w-full h-full items-center flex-1'>
       { status === FETCH_STATUS.INIT && initialContent}
@@ -33,7 +32,7 @@ function ContentDialog({ status, onClose, loadingTitle, createdTitle, initialCon
           <h2 className='bg-custom-orange px-2 text-2xl text-black w-max text-center font-bold'>
           { loadingTitle }
           </h2>
-          <a href={`${EXPLORER}/tx/${tx?.hash}`} target="_blank" rel="noopener noreferrer" className='my-10 underline'>see transaction</a>
+          <a href={`${EXPLORER}/tx/${tx?.hash}`} target="_blank" rel="noopener noreferrer" className='my-10 underline'>view transaction</a>
           <div className='animate-spin border-r border-r-white w-16 h-16 rounded-full mt-4'></div>
         </>
       }

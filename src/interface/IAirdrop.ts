@@ -8,4 +8,5 @@ export interface IAirdrop {
   progress?: number
   isClaimed?: boolean
   isAllowed?: boolean
+  isExpired?: boolean
 }

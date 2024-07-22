@@ -11,9 +11,8 @@ const useAirdrop = () => {
   let PROVIDER: ethers.JsonRpcSigner | ethers.JsonRpcProvider = RPC_PROVIDER;
 
   const [isLoading, setIsLoading] = useState(FETCH_STATUS.INIT);
-  const [airdrops, setAirdrops] = useState<IAirdrop[]>();
   const [airdropManager, setAirdropManager] = useState<AirdropManager>();
-  const { provider, address, setIsAdmin, setTx, setAirdropLoading } = useAuth();
+  const { provider, address, setIsAdmin, setTx, setAirdropLoading, setAirdrops } = useAuth();
 
   const initializeProvider = useCallback(async() => {
     if (provider) {
@@ -26,12 +25,11 @@ const useAirdrop = () => {
 
   useEffect(() => {
     initializeProvider();
-  },[provider]);
+  },[provider, initializeProvider]);
 
-  const getAllAirdrops = async () => {
+  const getAllAirdrops = useCallback(async () => {
     setAirdropLoading(true);
     const airdropManager = await initializeProvider();
-    console.log('airdropManager: ', airdropManager);
     const items = await airdropManager?.getAirdrops();
     const airdropsDetail: IAirdrop[] = [];
     for (const air in items) {
@@ -52,22 +50,21 @@ const useAirdrop = () => {
       const { airdropAmountLeft, totalAirdropAmount } = newAirdrop;
       const progress = (totalAirdropAmount - airdropAmountLeft) / totalAirdropAmount;
       newAirdrop.progress = Math.round(progress * 100);
+      newAirdrop.isExpired = new Date(newAirdrop.expirationDate) < new Date();
       airdropsDetail.push(newAirdrop);
     }
     if (airdropManager && address) {
       const isAdmin:boolean = await airdropManager?.isAdmin(address) as boolean;
       setIsAdmin(isAdmin);
-      console.log('isAdmin: ', isAdmin);
     };
     setAirdrops(airdropsDetail);
     setAirdropLoading(false);
+  },[initializeProvider, setAirdropLoading, setIsAdmin, address]);
 
-  }
   const removeAirdrop = async (airdropAddress: string) => {
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET);
       const response = await airdropManager?.removeAirdrop(airdropAddress);
-      console.log('response: ', response);
       setIsLoading(FETCH_STATUS.WAIT_TX);
       setTx(response);
       await response?.wait();
@@ -84,7 +81,6 @@ const useAirdrop = () => {
       setIsLoading(FETCH_STATUS.WAIT_TX);
       setTx(response);
       await response?.wait();
-      // await new Promise((resolve, reject) => setTimeout(() => resolve(''), 3000));
       setIsLoading(FETCH_STATUS.COMPLETED);
     } catch (error) {
       console.log('error: ', error);
@@ -93,11 +89,9 @@ const useAirdrop = () => {
   }
 
   const claim = async (airdropAddress: string) => {
-    console.log('airdropAddress: ', airdropAddress);
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET);
       const response = await airdropManager?.claim(airdropAddress, address);
-      console.log('response: ', response);
       setIsLoading(FETCH_STATUS.WAIT_TX);
       setTx(response);
       await response?.wait();
@@ -111,7 +105,6 @@ const useAirdrop = () => {
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET);
       const response = await airdropManager?.allowAddress(airdropAddress, walletAddress);
-      console.log('response: ', response);
       setTx(response);
       setIsLoading(FETCH_STATUS.WAIT_TX);
       await response?.wait();
@@ -122,7 +115,6 @@ const useAirdrop = () => {
     }
   }
   return {
-    airdrops,
     removeAirdrop,
     addAirdrop,
     getAllAirdrops,

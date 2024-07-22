@@ -9,12 +9,11 @@ import { useEffect } from 'react';
 function AirdropContainer() {
   const colors = ['bg-custom-orange', 'bg-custom-green', 'bg-custom-pink'];
 
-  const { airdrops, getAllAirdrops } = useAirdrop();
-  const { provider, airdropLoading } = useAuth();
-  console.log('airdropLoading: ', airdropLoading);
+  const { getAllAirdrops } = useAirdrop();
+  const { provider, airdropLoading, airdrops } = useAuth();
   useEffect(() => {
     getAllAirdrops();
-  }, [provider]);
+  }, [provider, getAllAirdrops]);
 
   return (
     <div className="lg:w-[90%] xl:w-[1300px] m-auto mt-[90px]">

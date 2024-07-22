@@ -19,9 +19,8 @@ type props = {
 
 function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false, airdrop, onCloseDialog }: props) {
   const { isAdmin, address } = useAuth();
-  const { airdropLoading } = useAirdrop();
   let disabled = false;
-  if (address && !airdropLoading) disabled = !isAdmin ? (!airdrop.isAllowed || airdrop.isClaimed!) : false;
+  if (address) disabled = !isAdmin ? (!airdrop.isAllowed || airdrop.isClaimed! || airdrop?.isExpired!) : false;
   return (
     <>
       <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full' : 'border p-7 w-[400px]'}`}>
@@ -54,6 +53,13 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             <Badge
               color='green'
               title='claimed'
+            />
+          }
+          {
+            (!isAdmin && airdrop.isExpired && address) &&
+            <Badge
+              color='lime'
+              title='Expired'
             />
           }
         </div>
