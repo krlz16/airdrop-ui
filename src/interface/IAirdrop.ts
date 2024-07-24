@@ -9,4 +9,5 @@ export interface IAirdrop {
   isClaimed?: boolean
   isAllowed?: boolean
   isExpired?: boolean
+  balance?: number
 }

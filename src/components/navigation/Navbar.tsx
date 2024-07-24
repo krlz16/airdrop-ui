@@ -13,7 +13,7 @@ function Navbar() {
     return `${address.substring(0, 4)}...${address.substring(address.length - 4)}`
   }
   return (
-    <nav className="w-full p-6 flex justify-between">
+    <nav className="w-full p-6 flex justify-between z-10 fixed bg-black border-b border-zinc-600">
       <Image src={logo.src} alt="logo" style={{ width: 'auto', height: 'auto' }} width={170} height={100}  />
       {address ? (
         <div className="flex gap-4">

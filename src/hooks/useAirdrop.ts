@@ -38,11 +38,13 @@ const useAirdrop = () => {
       const newAirdrop: IAirdrop = {
         name: detail![0].toString(),
         address: detail![1].toString(),
-        totalAirdropAmount: Number(ethers.formatEther(detail![2].toString())),
-        airdropAmountLeft: Number(ethers.formatEther(detail![3].toString())),
-        claimAmount: Number(ethers.formatEther(detail![4].toString())),
+        totalAirdropAmount: Number(ethers.formatEther(detail![2])),
+        airdropAmountLeft: Number(ethers.formatEther(detail![3])),
+        claimAmount: Number(ethers.formatEther(detail![4])),
         expirationDate: new Date(parseFloat(detail![5].toString()) * 1000),
       }
+      const balance = await airdropManager.getBalance(newAirdrop.address);
+      newAirdrop.balance = Number(ethers.formatEther(balance));
       if (address){
         newAirdrop.isClaimed = await airdropManager.hasClaimed(items[Number(air)].toString(), address);
         newAirdrop.isAllowed = await airdropManager.isAllowed(items[Number(air)].toString(), address);

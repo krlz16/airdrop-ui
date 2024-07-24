@@ -13,7 +13,7 @@ const useConnectWallet = () => {
       const signer = await web3Provider.getSigner()
       const address = await signer.getAddress()
       setProvider(web3Provider);
-      setAddress(address)
+      setAddress(address.toLowerCase());
     } catch (error) {
       console.error('Error connecting to wallet', error)
       setIsError(!ethereum)

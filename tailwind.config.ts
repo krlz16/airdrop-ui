@@ -12,7 +12,8 @@ const config: Config = {
         'custom-orange': '#FF9100',
         'custom-pink': '#FF71E1',
         'custom-green': '#78C700',
-        'custom-lime': '#DEFF1A'
+        'custom-lime': '#DEFF1A',
+        'custom-cyan': '#0093cb'
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

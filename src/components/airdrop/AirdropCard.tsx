@@ -20,7 +20,7 @@ type props = {
 function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false, airdrop, onCloseDialog }: props) {
   const { isAdmin, address } = useAuth();
   let disabled = false;
-  if (address) disabled = !isAdmin ? (!airdrop.isAllowed || airdrop.isClaimed! || airdrop?.isExpired!) : false;
+  if (address) disabled = !isAdmin ? (!airdrop.isAllowed || airdrop.isClaimed! || airdrop?.isExpired! || airdrop.balance === 0) : false;
   return (
     <>
       <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full' : 'border p-7 w-[400px]'}`}>
@@ -60,6 +60,13 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             <Badge
               color='lime'
               title='Expired'
+            />
+          }
+          {
+            (!isAdmin && airdrop.balance === 0 && address) &&
+            <Badge
+              color='cyan'
+              title='No Balance'
             />
           }
         </div>

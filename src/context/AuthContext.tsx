@@ -45,8 +45,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   )
 
   const logout = useCallback(() => {
-    setProvider(undefined)
-    setAddress('')
+    setProvider(undefined);
+    setAddress('');
+    setIsAdmin(false);
+    setTx(undefined);
   }, [])
 
   return (
