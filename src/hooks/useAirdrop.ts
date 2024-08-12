@@ -4,11 +4,12 @@ import { useAuth } from '@/context/AuthContext';
 import { IAirdrop } from '@/interface/IAirdrop';
 import { AirdropManager, AirdropManager__factory } from '@/typechain-types';
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import merkleData from '@/utils/merkleData.json';
 
 const useAirdrop = () => {
   const RPC_PROVIDER = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL)
-  let PROVIDER: ethers.JsonRpcSigner | ethers.JsonRpcProvider = RPC_PROVIDER;
+  let PROVIDER = useRef<ethers.JsonRpcSigner | ethers.JsonRpcProvider>(RPC_PROVIDER);
 
   const [isLoading, setIsLoading] = useState(FETCH_STATUS.INIT);
   const [airdropManager, setAirdropManager] = useState<AirdropManager>();
@@ -16,9 +17,9 @@ const useAirdrop = () => {
 
   const initializeProvider = useCallback(async() => {
     if (provider) {
-      PROVIDER = await provider.getSigner();
+      PROVIDER.current = await provider.getSigner();
     }
-    const airdropManager = AirdropManager__factory.connect(AIRDROP_MANAGER_ADDRESS!, PROVIDER);
+    const airdropManager = AirdropManager__factory.connect(AIRDROP_MANAGER_ADDRESS!, PROVIDER.current);
     setAirdropManager(airdropManager);
     return airdropManager;
   },[provider]);
@@ -42,12 +43,18 @@ const useAirdrop = () => {
         airdropAmountLeft: Number(ethers.formatEther(detail![3])),
         claimAmount: Number(ethers.formatEther(detail![4])),
         expirationDate: new Date(parseFloat(detail![5].toString()) * 1000),
+        airdropType: Number(ethers.toBigInt(detail[6])) ? 'merkle' : 'custom'
       }
       const balance = await airdropManager.getBalance(newAirdrop.address);
       newAirdrop.balance = Number(ethers.formatEther(balance));
       if (address){
         newAirdrop.isClaimed = await airdropManager.hasClaimed(items[Number(air)].toString(), address);
-        newAirdrop.isAllowed = await airdropManager.isAllowed(items[Number(air)].toString(), address);
+        if (newAirdrop.airdropType === 'custom') {
+          newAirdrop.isAllowed = await airdropManager.isAllowed(items[Number(air)].toString(), address);
+        } else {
+          newAirdrop.isAllowed = merkleData.airdropInfo.some((merkle) => merkle.address.toLowerCase() === address);
+          newAirdrop.merkle = merkleData.airdropInfo.find((merkle) => merkle.address.toLowerCase() === address);
+        }
       }
       const { airdropAmountLeft, totalAirdropAmount } = newAirdrop;
       const progress = (totalAirdropAmount - airdropAmountLeft) / totalAirdropAmount;
@@ -61,7 +68,7 @@ const useAirdrop = () => {
     };
     setAirdrops(airdropsDetail);
     setAirdropLoading(false);
-  },[initializeProvider, setAirdropLoading, setIsAdmin, address]);
+  },[initializeProvider, setAirdropLoading, setIsAdmin, address, setAirdrops]);
 
   const removeAirdrop = async (airdropAddress: string) => {
     try {
@@ -90,10 +97,12 @@ const useAirdrop = () => {
     }
   }
 
-  const claim = async (airdropAddress: string) => {
+  const claim = async (airdropAddress: string, amount:number = 0, proof:string[] = []) => {
+    console.log('proof: ', proof);
+    console.log('amount: ', amount);
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET);
-      const response = await airdropManager?.claim(airdropAddress, address);
+      const response = await airdropManager?.claim(airdropAddress, address, amount, proof);
       setIsLoading(FETCH_STATUS.WAIT_TX);
       setTx(response);
       await response?.wait();

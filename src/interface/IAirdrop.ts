@@ -10,4 +10,10 @@ export interface IAirdrop {
   isAllowed?: boolean
   isExpired?: boolean
   balance?: number
+  airdropType: 'custom' | 'merkle',
+  merkle?: {
+    address: string
+    proof: string[],
+    amount: number
+  }
 }
