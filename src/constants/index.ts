@@ -2,6 +2,10 @@
 
 export const AIRDROP_MANAGER_ADDRESS = process.env.NEXT_PUBLIC_AIRDROP_MANAGER_ADDRESS;
 export const EXPLORER = process.env.NEXT_PUBLIC_EXPLORER;
+export const BUNDLER_API_KEY = process.env.NEXT_PUBLIC_BUNDLER_API_KEY;
+export const CUSTOM_BUNDLER_URL = process.env.NEXT_PUBLIC_CUSTOM_BUNDLER_URL;
+export const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID;
+export const ARKA_PUBLIC_KEY = process.env.NEXT_PUBLIC_ARKA_PUBLIC_KEY;
 
 export const FETCH_STATUS = {
   INIT: 'INIT',
