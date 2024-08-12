@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import BaseDialog from './BaseDialog'
 import Button from '../common/Button'
 import Input from '../common/Input'
@@ -48,11 +48,14 @@ function AirdropDialog({ open, closeDialog }: props) {
                 AirDrop
               </button>
             </li>
-            <li className={`cursor-pointer hover:text-zinc-300 text-sm font-medium text-zinc-400 mb-3 ${menu === 'allow' ? 'border-b-2': ''}`}>
-              <button onClick={() => setMenu('allow')}>
-                Allowed wallets
-              </button>
-            </li>
+            {
+              airdrop?.airdropType === 'custom' &&
+              <li className={`cursor-pointer hover:text-zinc-300 text-sm font-medium text-zinc-400 mb-3 ${menu === 'allow' ? 'border-b-2': ''}`}>
+                <button onClick={() => setMenu('allow')}>
+                  Allowed wallets
+                </button>
+              </li>
+            }
           </ul>
         }
         {
@@ -62,7 +65,7 @@ function AirdropDialog({ open, closeDialog }: props) {
                 <AirdropCard
                   airdrop={airdrop!}
                   dialog={true}
-                  onClick={() => claim(airdrop?.address!)}
+                  onClick={() => claim(airdrop?.address!, airdrop?.merkle?.amount, airdrop?.merkle?.proof)}
                 />
               }
               status={isLoading}
