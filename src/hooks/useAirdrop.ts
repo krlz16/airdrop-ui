@@ -5,7 +5,7 @@ import { IAirdrop } from '@/interface/IAirdrop';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import merkleData from '@/utils/merkleData.json';
-import { AirdropManager, AirdropManager__factory } from '@/typechain-types';
+import { AirdropManager, AirdropManager__factory } from '../../typechain-types';
 
 const useAirdrop = () => {
   const RPC_PROVIDER = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL)
