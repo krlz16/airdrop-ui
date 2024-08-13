@@ -5,7 +5,7 @@ import { IAirdrop } from '@/interface/IAirdrop';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import merkleData from '@/utils/merkleData.json';
-import { AirdropManager, AirdropManager__factory } from '@/typechain-types';
+import { AirdropManager, AirdropManager__factory } from '../../typechain-types';
 
 const useAirdrop = () => {
   const RPC_PROVIDER = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL)
@@ -102,15 +102,19 @@ const useAirdrop = () => {
     }
   }
 
-  const claim = async (airdropAddress: string, amount:number = 0, proof:string[] = []) => {
+  const claim = async (airdropAddress: string, amount:number = 0, proof:string[], gasless:boolean = false) => {
     console.log('proof: ', proof);
     console.log('amount: ', amount);
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET);
-      const response = await airdropManager?.claim(airdropAddress, address, amount, proof);
-      setIsLoading(FETCH_STATUS.WAIT_TX);
-      setTx(response);
-      await response?.wait();
+      if(gasless) {
+        
+      } else {
+        const response = await airdropManager?.claim(airdropAddress, address, amount, proof);
+        setIsLoading(FETCH_STATUS.WAIT_TX);
+        setTx(response);
+        await response?.wait();
+      }
       setIsLoading(FETCH_STATUS.COMPLETED);
     } catch (error) {
       console.log('error: ', error);
