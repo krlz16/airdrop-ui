@@ -2,10 +2,10 @@
 import { AIRDROP_MANAGER_ADDRESS, FETCH_STATUS } from '@/constants';
 import { useAuth } from '@/context/AuthContext';
 import { IAirdrop } from '@/interface/IAirdrop';
-import { AirdropManager, AirdropManager__factory } from '@/typechain-types';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import merkleData from '@/utils/merkleData.json';
+import { AirdropManager, AirdropManager__factory } from '@/typechain-types';
 
 const useAirdrop = () => {
   const RPC_PROVIDER = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL)
@@ -35,6 +35,7 @@ const useAirdrop = () => {
     const airdropsDetail: IAirdrop[] = [];
     for (const air in items) {
       const detail = await airdropManager?.getAirdropInfo(items[Number(air)]);
+      console.log('detail: ', detail);
       
       const newAirdrop: IAirdrop = {
         name: detail![0].toString(),
@@ -45,6 +46,10 @@ const useAirdrop = () => {
         expirationDate: new Date(parseFloat(detail![5].toString()) * 1000),
         airdropType: Number(ethers.toBigInt(detail[6])) ? 'merkle' : 'custom'
       }
+      console.log('airdropamount unformatted is ',ethers.formatEther(detail![3]));
+      
+      console.log('airdropamount left is',newAirdrop.airdropAmountLeft);
+      
       const balance = await airdropManager.getBalance(newAirdrop.address);
       newAirdrop.balance = Number(ethers.formatEther(balance));
       if (address){
@@ -52,8 +57,8 @@ const useAirdrop = () => {
         if (newAirdrop.airdropType === 'custom') {
           newAirdrop.isAllowed = await airdropManager.isAllowed(items[Number(air)].toString(), address);
         } else {
-          newAirdrop.isAllowed = merkleData.airdropInfo.some((merkle) => merkle.address.toLowerCase() === address);
-          newAirdrop.merkle = merkleData.airdropInfo.find((merkle) => merkle.address.toLowerCase() === address);
+          newAirdrop.isAllowed = merkleData.claims.some((merkle) => merkle.address.toLowerCase() === address);
+          newAirdrop.merkle = merkleData.claims.find((merkle) => merkle.address.toLowerCase() === address);
         }
       }
       const { airdropAmountLeft, totalAirdropAmount } = newAirdrop;

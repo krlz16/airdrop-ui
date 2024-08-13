@@ -14,6 +14,6 @@ export interface IAirdrop {
   merkle?: {
     address: string
     proof: string[],
-    amount: number
+    amount: string
   }
 }
