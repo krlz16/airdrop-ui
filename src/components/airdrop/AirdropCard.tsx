@@ -26,6 +26,34 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
       <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full' : 'border p-7 w-[400px]'}`}>
         <div className={`!absolute -top-3 right-0 px-2 flex gap-2 ${!dialog ? '': 'hidden'}`}>
           {
+            (!airdrop.isAllowed && address) &&
+              <Badge
+                color='pink'
+                title='claim no allowed'
+              />
+          }
+          {
+            (airdrop.isClaimed && address) &&
+            <Badge
+              color='green'
+              title='claimed'
+            />
+          }
+          {
+            (airdrop.isExpired && address) &&
+            <Badge
+              color='lime'
+              title='Expired'
+            />
+          }
+          {
+            (airdrop.balance === 0 && address) &&
+            <Badge
+              color='cyan'
+              title='No Balance'
+            />
+          }
+          {
             isAdmin && (
               <Button
                 onClick={onCloseDialog}
@@ -40,34 +68,6 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
                 </span>
               </Button>
             )
-          }
-          {
-            (!isAdmin && !airdrop.isAllowed && address) &&
-              <Badge
-                color='pink'
-                title='claim no allowed'
-              />
-          }
-          {
-            (!isAdmin && airdrop.isClaimed && address) &&
-            <Badge
-              color='green'
-              title='claimed'
-            />
-          }
-          {
-            (!isAdmin && airdrop.isExpired && address) &&
-            <Badge
-              color='lime'
-              title='Expired'
-            />
-          }
-          {
-            (!isAdmin && airdrop.balance === 0 && address) &&
-            <Badge
-              color='cyan'
-              title='No Balance'
-            />
           }
         </div>
         <section className='flex w-full'>

@@ -30,6 +30,13 @@ function AirdropContainer() {
             />
           )
         }
+        {
+          (airdrops?.length === 0 && !airdropLoading) && (
+            <div className='w-full flex justify-center mt-10'>
+              <span className='text-6xl italic text-zinc-800'>No AirDrops</span>
+            </div>
+          )
+        }
       </div>
     </div>
   )
