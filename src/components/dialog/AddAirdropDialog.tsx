@@ -26,6 +26,7 @@ function AddAirdropDialog({ open, closeDialog }: props) {
     if (isLoading === FETCH_STATUS.COMPLETED) {
       closeDialog();
       getAllAirdrops();
+      setContractAddress('');
     }
     setIsLoading(FETCH_STATUS.INIT);
   }

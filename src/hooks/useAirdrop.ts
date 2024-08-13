@@ -102,7 +102,7 @@ const useAirdrop = () => {
     }
   }
 
-  const claim = async (airdropAddress: string, amount:number = 0, proof:string[] = []) => {
+  const claim = async (airdropAddress: string, amount:string = '0', proof:string[] = []) => {
     console.log('proof: ', proof);
     console.log('amount: ', amount);
     try {
