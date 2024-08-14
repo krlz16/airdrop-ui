@@ -3,12 +3,10 @@ import XIcon from '../icons/XIcon'
 import ProgressBar from './ProgressBar'
 import AirdropIcon from '../icons/AirdropIcon'
 import ArrowRightIcon from '../icons/ArrowRightIcon'
-import useAirdrop from '@/hooks/useAirdrop'
 import { useAuth } from '@/context/AuthContext'
 import ConnectWalletButton from '../navigation/ConnectWalletButton'
 import Badge from '../common/Badge'
 import { IAirdrop } from '@/interface/IAirdrop'
-import { useState } from 'react'
 
 type props = {
   background?: string
@@ -87,6 +85,10 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
               <div className='text-zinc-500 font-semibold text-xs flex justify-between mt-2'>
                 <h6>Expiration date</h6>
                 <p>{ airdrop.expirationDate.toDateString() }</p>
+              </div>
+              <div className='text-zinc-500 font-semibold text-xs flex justify-between mt-1'>
+                <h6>Type</h6>
+                <p>{ airdrop.airdropType }</p>
               </div>
             </section>
           </div>
