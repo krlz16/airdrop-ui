@@ -26,6 +26,8 @@ interface AuthContextType {
   tx: ContractTransactionResponse | undefined
   setAirdrops: React.Dispatch<React.SetStateAction<IAirdrop[] | undefined>>
   airdrops: IAirdrop[] | undefined
+  setGasless: React.Dispatch<React.SetStateAction<boolean>>
+  gasless: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -39,6 +41,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [airdropLoading, setAirdropLoading] = useState<boolean>(false);
   const [tx, setTx] = useState<ContractTransactionResponse>();
   const [airdrops, setAirdrops] = useState<IAirdrop[]>();
+  const [gasless, setGasless] = useState<boolean>(false);
 
   const [provider, setProvider] = useState<ethers.BrowserProvider | undefined>(
     undefined
@@ -68,7 +71,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         setAirdropLoading,
         airdropLoading,
         airdrops,
-        setAirdrops
+        setAirdrops,
+        setGasless,
+        gasless
       }}
     >
       {children}

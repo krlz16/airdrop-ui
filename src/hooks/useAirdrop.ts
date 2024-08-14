@@ -148,12 +148,13 @@ const useAirdrop = () => {
   const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
   const claim = async (
     airdropAddress: string,
-    amount: number = 0,
-    proof: string[],
+    amount: string = '0',
+    proof: string[] = [],
     gasless: boolean = false
   ) => {
-    console.log('proof: ', proof)
-    console.log('amount: ', amount)
+    console.log('gasless: ', gasless);
+    console.log('proof: ', proof);
+    console.log('amount: ', amount);
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET)
       if (gasless) {
@@ -202,6 +203,7 @@ const useAirdrop = () => {
         const uoHash = await primeSdk.send(op)
         let userOpsReceipt = null
         const timeout = Date.now() + 120000 // 2 minutes timeout
+        setIsLoading(FETCH_STATUS.WAIT_TX)
         while (userOpsReceipt == null && Date.now() < timeout) {
           console.log('Waiting for transaction...')
           await wait(5000)

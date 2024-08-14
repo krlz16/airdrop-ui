@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext'
 import ConnectWalletButton from '../navigation/ConnectWalletButton'
 import Badge from '../common/Badge'
 import { IAirdrop } from '@/interface/IAirdrop'
+import { useState } from 'react'
 
 type props = {
   background?: string
@@ -18,7 +19,7 @@ type props = {
 }
 
 function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false, airdrop, onCloseDialog }: props) {
-  const { isAdmin, address } = useAuth();
+  const { isAdmin, address, gasless, setGasless } = useAuth();
   let disabled = false;
   if (address) disabled = !isAdmin ? (!airdrop.isAllowed || airdrop.isClaimed! || airdrop?.isExpired! || airdrop.balance === 0) : false;
   return (
@@ -106,6 +107,21 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
                 : <ArrowRightIcon className={`${disabled ? '' : 'group-hover:fill-black'} fill-white`} />
               }
             </Button>
+            {
+              (dialog && address) && 
+              <div className="flex gap-2 items-center">
+                <label htmlFor="">gasless</label>
+                <label className="flex relative items-center cursor-pointer">
+                  <input
+                    checked={gasless}
+                    type="checkbox"
+                    className="sr-only"
+                    onChange={(e) => setGasless(Boolean(e.target.checked))}
+                  />
+                  <span className="w-9 h-5 bg-card rounded-full border border-input toggle-bg"></span>
+                </label>
+              </div>
+            }
           </div>
         </section>
         <section className={`flex justify-center mt-8 ${!(!address && dialog) ? 'hidden': ''}`}>

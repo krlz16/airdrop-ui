@@ -15,7 +15,7 @@ type props = {
 function AirdropDialog({ open, closeDialog }: props) {
   const [menu, setMenu] = useState<'airdrop'| 'allow'>('airdrop');
   const [walletAddress, setWalletAddress] = useState<string>('');
-  const { isAdmin, airdrop } = useAuth();
+  const { isAdmin, airdrop, gasless } = useAuth();
   const { allowedAddress, isLoading, setIsLoading, claim, getAllAirdrops } = useAirdrop();
 
   const handleAllowedAddress = () => {
@@ -65,7 +65,7 @@ function AirdropDialog({ open, closeDialog }: props) {
                 <AirdropCard
                   airdrop={airdrop!}
                   dialog={true}
-                  onClick={() => claim(airdrop?.address!, airdrop?.merkle?.amount, airdrop?.merkle?.proof)}
+                  onClick={() => claim(airdrop?.address!, airdrop?.merkle?.amount, airdrop?.merkle?.proof, gasless)}
                 />
               }
               status={isLoading}

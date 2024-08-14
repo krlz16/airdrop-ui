@@ -42,6 +42,34 @@ body {
   }
 }
 
+.toggle-bg:after {
+  --tw-content: '' --tw-border-opacity: 1;
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  border-radius: 9999px;
+  border-width: 1px;
+  content: '';
+  height: 1rem;
+  left: 0.125rem;
+  position: absolute;
+  top: 0.125rem;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  width: 1rem;
+}
+
+input:checked + .toggle-bg:after {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 255 255 / var(--tw-border-opacity));
+  transform: translateX(100%);
+}
+input:checked + .toggle-bg {
+  --tw-border-opacity: 1;
+  --tw-bg-opacity: 1;
+  background-color: orange;
+  border-color: rgb(56 63 107 / var(--tw-border-opacity));
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
