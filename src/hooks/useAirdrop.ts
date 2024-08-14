@@ -20,6 +20,7 @@ import {
 } from '@etherspot/prime-sdk'
 
 import AirdropAdminAbi from '@/utils/abi/AirdropManager.json'
+import axios from 'axios'
 
 const useAirdrop = () => {
   const RPC_PROVIDER = new ethers.JsonRpcProvider(
@@ -145,72 +146,18 @@ const useAirdrop = () => {
       setIsLoading(FETCH_STATUS.ERROR)
     }
   }
-  const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+
   const claim = async (
     airdropAddress: string,
     amount: string = '0',
     proof: string[] = [],
     gasless: boolean = false
   ) => {
-    console.log('gasless: ', gasless);
-    console.log('proof: ', proof);
-    console.log('amount: ', amount);
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET)
       if (gasless) {
-        const metamaskProvider = await MetaMaskWalletProvider.connect()
-        const bundlerApiKey = BUNDLER_API_KEY
-        const customBundlerUrl = CUSTOM_BUNDLER_URL
-        const chainId = Number(CHAIN_ID)
-        const airdropManagerAddress = AIRDROP_MANAGER_ADDRESS
-        const apiKey = ARKA_PUBLIC_KEY
-        if (
-          !metamaskProvider ||
-          !bundlerApiKey ||
-          !customBundlerUrl ||
-          !chainId ||
-          !airdropManagerAddress ||
-          !apiKey
-        ) {
-          throw new Error('Missing data for GaslessClaimer execution')
-        }
-        const primeSdk = new PrimeSdk(metamaskProvider, {
-          chainId: chainId,
-          bundlerProvider: new EtherspotBundler(
-            chainId,
-            bundlerApiKey,
-            customBundlerUrl
-          ),
-        })
-        const airdropAdminContract = new ethers.Contract(
-          airdropManagerAddress,
-          AirdropAdminAbi.abi
-        )
-        const encodedData = airdropAdminContract.interface.encodeFunctionData(
-          'claim',
-          [airdropAddress, address, amount, proof]
-        )
-        await primeSdk.addUserOpsToBatch({
-          to: airdropManagerAddress,
-          data: encodedData,
-        })
-        const op = await primeSdk.estimate({
-          paymasterDetails: {
-            url: `https://arka.etherspot.io?apiKey=${apiKey}&chainId=${chainId}`,
-            context: { mode: 'sponsor' },
-          },
-        })
-        const uoHash = await primeSdk.send(op)
-        let userOpsReceipt = null
-        const timeout = Date.now() + 120000 // 2 minutes timeout
-        setIsLoading(FETCH_STATUS.WAIT_TX)
-        while (userOpsReceipt == null && Date.now() < timeout) {
-          console.log('Waiting for transaction...')
-          await wait(5000)
-          userOpsReceipt = await primeSdk.getUserOpReceipt(uoHash)
-        }
-        console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt)
-        setIsLoading(FETCH_STATUS.COMPLETED)
+        claimGasless(airdropAddress, amount, proof)
       } else {
         const response = await airdropManager?.claim(
           airdropAddress,
@@ -228,6 +175,98 @@ const useAirdrop = () => {
       setIsLoading(FETCH_STATUS.ERROR)
     }
   }
+  const claimGasless = async (
+    airdropAddress: string,
+    amount: string = '0',
+    proof: string[] = []
+  ) => {
+    try {
+      console.log('claimGasless');
+      console.log('airdropAddress:', airdropAddress);
+      console.log('amount:', amount);
+      console.log('proof:', proof);
+      console.log('address:', address);
+      
+      const metamaskProvider = await MetaMaskWalletProvider.connect()
+      const bundlerApiKey = BUNDLER_API_KEY
+      const customBundlerUrl = CUSTOM_BUNDLER_URL
+      const chainId = Number(CHAIN_ID)
+      const airdropManagerAddress = AIRDROP_MANAGER_ADDRESS
+      const apiKey = ARKA_PUBLIC_KEY
+      if (
+        !metamaskProvider ||
+        !bundlerApiKey ||
+        !customBundlerUrl ||
+        !chainId ||
+        !airdropManagerAddress ||
+        !apiKey
+      ) {
+        throw new Error('Missing data for GaslessClaimer execution')
+      }
+      const primeSdk = new PrimeSdk(metamaskProvider, {
+        chainId: chainId,
+        bundlerProvider: new EtherspotBundler(
+          chainId,
+          bundlerApiKey,
+          customBundlerUrl
+        ),
+      })
+      const smartAddress = await primeSdk.getCounterFactualAddress();
+      console.log(`EtherspotWallet address: ${smartAddress}`);
+      const balance = await primeSdk.getNativeBalance()
+      console.log('balance is:', balance)
+      const airdropAdminContract = new ethers.Contract(
+        airdropManagerAddress,
+        AirdropAdminAbi.abi
+      )
+      const headers = {'Content-Type': 'application/json'}
+      const bodyCheckWhitelist = {
+        "params": [smartAddress]
+      }
+      const isWhitelisted = await axios.post(`https://arka.etherspot.io/checkWhitelist?apiKey=${apiKey}&chainId=${chainId}`, bodyCheckWhitelist, {headers: headers})
+      console.log('isWhitelisted:', isWhitelisted);
+      console.log('isWhitelisted:', isWhitelisted.data.message);
+      
+      if(isWhitelisted.data.message !== "Already added") {
+        console.log('Whitelisting address');
+        const body = {
+          "params": [[smartAddress]]
+        }
+        const  responseWhitelist = await axios.post(`https://arka.etherspot.io/whitelist?apiKey=${apiKey}&chainId=${chainId}`, body, {headers: headers})
+        console.log('responseWhitelist:', responseWhitelist);
+      }      
+      const encodedData = airdropAdminContract.interface.encodeFunctionData(
+        'claim',
+        [airdropAddress, address, amount, proof]
+      )
+      await primeSdk.addUserOpsToBatch({
+        to: airdropManagerAddress,
+        data: encodedData,
+      })
+      const op = await primeSdk.estimate({
+        paymasterDetails: {
+          url: `https://arka.etherspot.io?apiKey=${apiKey}&chainId=${chainId}`,
+          context: { mode: 'sponsor' },
+        },
+      })
+      const uoHash = await primeSdk.send(op)
+      let userOpsReceipt = null
+      const timeout = Date.now() + 120000 // 2 minutes timeout
+      setIsLoading(FETCH_STATUS.WAIT_TX)
+      while (userOpsReceipt == null && Date.now() < timeout) {
+        console.log('Waiting for transaction...')
+        await wait(5000)
+        userOpsReceipt = await primeSdk.getUserOpReceipt(uoHash)
+      }
+      console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt)
+      setIsLoading(FETCH_STATUS.COMPLETED)
+    } catch (error) {
+      console.log('error: ', error)
+    }
+  }
+
+  const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
   const allowedAddress = async (
     airdropAddress: string,
     walletAddress: string
