@@ -191,13 +191,40 @@ const useAirdrop = () => {
       console.log('address:', address);
       console.log('domain:', domain);
 
-      const wallet = ethers.Wallet.createRandom();
+      const wallet = ethers.Wallet.createRandom()
+      const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
+      const connectedWallet = wallet.connect(provider);
 
-      // TODO do something here 
+      const bundlerApiKey = BUNDLER_API_KEY
+      const customBundlerUrl = CUSTOM_BUNDLER_URL
+      const chainId = Number(CHAIN_ID)
+      const airdropManagerAddress = AIRDROP_MANAGER_ADDRESS
+      const apiKey = ARKA_PUBLIC_KEY
+      if (
+        !bundlerApiKey ||
+        !customBundlerUrl ||
+        !chainId ||
+        !airdropManagerAddress ||
+        !apiKey
+      ) {
+        throw new Error('Missing data for RNSDomain claimer execution')
+      }
 
+      const primeSdk = new PrimeSdk({
+        privateKey: connectedWallet.privateKey
+      }, {
+        chainId: chainId,
+        entryPointAddress: connectedWallet.address,
+        bundlerProvider: new EtherspotBundler(
+          chainId,
+          bundlerApiKey,
+          customBundlerUrl
+        ),
+      })
+
+      await claimSponsored(airdropAddress, amount, proof, primeSdk, airdropManagerAddress, apiKey, chainId)
     } catch (error) {
       console.log('error: ', error)
-      setIsLoading(FETCH_STATUS.ERROR)
     }
   }
   const claimGasless = async (
@@ -236,6 +263,22 @@ const useAirdrop = () => {
           customBundlerUrl
         ),
       })
+
+      await claimSponsored(airdropAddress, amount, proof, primeSdk, airdropManagerAddress, apiKey, chainId)
+    } catch (error) {
+      console.log('error: ', error)
+    }
+  }
+  const claimSponsored = async (
+    airdropAddress: string,
+    amount: string = '0',
+    proof: string[] = [],
+    primeSdk: PrimeSdk,
+    airdropManagerAddress: string,
+    apiKey: string,
+    chainId: number
+  ) => {
+    try {
       const smartAddress = await primeSdk.getCounterFactualAddress();
       console.log(`EtherspotWallet address: ${smartAddress}`);
       const balance = await primeSdk.getNativeBalance()
