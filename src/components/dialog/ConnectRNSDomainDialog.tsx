@@ -23,7 +23,7 @@ function ConnectRNSDomainDialog({ closeDialog, open }: props) {
 
   useEffect(() => {
     setIsSearching(false)
-    
+
     if(address && domain){
       closeDialog()
       setIsError(false)
@@ -33,7 +33,6 @@ function ConnectRNSDomainDialog({ closeDialog, open }: props) {
 
   useEffect(()=> {
     if(isError) {
-      setIsSearching(false)
       setIsError(false)
     }
   }, [isError])
@@ -69,7 +68,7 @@ function ConnectRNSDomainDialog({ closeDialog, open }: props) {
             </h2>
             <div className="relative flex justify-center items-center">
               <RifIcon className="w-[100px] h-[100px] absolute" />
-              <div className="animate-spin border border-r-slate-300 w-[200px] h-[200px] rounded-full"></div>
+              <div className="animate-spin border-r border-r-slate-300 w-[200px] h-[200px] rounded-full"></div>
             </div>
           </div>
         ) : (
