@@ -4,11 +4,12 @@ import ProgressBar from './ProgressBar'
 import AirdropIcon from '../icons/AirdropIcon'
 import ArrowRightIcon from '../icons/ArrowRightIcon'
 import { useAuth } from '@/context/AuthContext'
-import ConnectWalletButton from '../navigation/ConnectWalletButton'
 import Badge from '../common/Badge'
 import { IAirdrop } from '@/interface/IAirdrop'
-import ConnectRNSDomainButton from '../navigation/ConnectRNSDomainButton'
 import Connect from '../navigation/Connect'
+import MerkleData from '@/utils/merkleData.json'
+import { useEffect, useState } from 'react'
+import { ethers } from 'ethers'
 
 type props = {
   background?: string
@@ -20,8 +21,14 @@ type props = {
 
 function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false, airdrop, onCloseDialog }: props) {
   const { isAdmin, address, gasless, setGasless } = useAuth();
+  const [amount, setAmount] = useState<string>('0');
   let disabled = false;
   if (address) disabled = !isAdmin ? (!airdrop.isAllowed || airdrop.isClaimed! || airdrop?.isExpired! || airdrop.balance === 0) : false;
+  useEffect(() => {
+    if(airdrop.airdropType !== 'merkle') return;
+    const claim = MerkleData.claims.find(claim => claim.address.toLowerCase() === address.toLowerCase());
+    setAmount(claim?.amount ? ethers.formatUnits(claim?.amount, 18).toString() : '0');
+  }, [address])
   return (
     <>
       <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full' : 'border p-7 w-[400px]'}`}>
@@ -78,7 +85,7 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             <section className='w-full mt-2'>
               <div className='flex justify-between'>
                 <h6>Amount to receive</h6>
-                <p>{airdrop.claimAmount}</p>
+                <p>{airdrop.airdropType === 'merkle' ? amount : airdrop.claimAmount }</p>
               </div>
               <div className='flex justify-between mt-2'>
                 <h6>Total available</h6>

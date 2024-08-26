@@ -19,12 +19,11 @@ function Hero() {
                 variant='secondary'
                 width={190}
                 >
-                Min runes on RSK
+                Airdrop Section
               </Button>
               <div className='w-[345px] font-medium'>
                 <span className='bg-custom-orange w-[60px] h-[14px] rounded-full px-1 text-black'>WHAT IS?</span>
-                <p className='mb-3 mt-4'>Welcome to the Runes Giveaway Machine! Mint and collect unique runes from the Bitcoin network bridged to RSK.</p>
-                <p>Dive into this revolutionary experience and own a piece of digital history. Are you ready to unveil your fortune?</p>
+                <p className='mb-3 mt-4'>Welcome to the Runes Giveaway Machine! Airdrop Section, claim unique airdrops on RSK Network</p>
               </div>
             </div>
           </div>
