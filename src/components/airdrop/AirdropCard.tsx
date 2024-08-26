@@ -8,6 +8,7 @@ import ConnectWalletButton from '../navigation/ConnectWalletButton'
 import Badge from '../common/Badge'
 import { IAirdrop } from '@/interface/IAirdrop'
 import ConnectRNSDomainButton from '../navigation/ConnectRNSDomainButton'
+import Connect from '../navigation/Connect'
 
 type props = {
   background?: string
@@ -24,13 +25,13 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
   return (
     <>
       <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full' : 'border p-7 w-[400px]'}`}>
-        <div className={`!absolute -top-3 right-0 px-2 flex gap-2 ${!dialog ? '': 'hidden'}`}>
+        <div className={`!absolute -top-3 right-0 px-2 flex gap-2 ${!dialog ? '' : 'hidden'}`}>
           {
             (!airdrop.isAllowed && address) &&
-              <Badge
-                color='pink'
-                title='claim no allowed'
-              />
+            <Badge
+              color='pink'
+              title='claim no allowed'
+            />
           }
           {
             (airdrop.isClaimed && address) &&
@@ -72,24 +73,24 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
         </div>
         <section className='flex w-full'>
           <div className='w-2/3'>
-            <h3 className={`${background} w-max font-semibold text-xl px-1 text-black`}>{ airdrop.name }</h3>
+            <h3 className={`${background} w-max font-semibold text-xl px-1 text-black`}>{airdrop.name}</h3>
             <ProgressBar value={airdrop.progress!} background={background} />
             <section className='w-full mt-2'>
               <div className='flex justify-between'>
                 <h6>Amount to receive</h6>
-                <p>{ airdrop.claimAmount }</p>
+                <p>{airdrop.claimAmount}</p>
               </div>
               <div className='flex justify-between mt-2'>
                 <h6>Total available</h6>
-                <p>{ airdrop.airdropAmountLeft }</p>
+                <p>{airdrop.airdropAmountLeft}</p>
               </div>
               <div className='text-zinc-500 font-semibold text-xs flex justify-between mt-2'>
                 <h6>Expiration date</h6>
-                <p>{ airdrop.expirationDate.toDateString() }</p>
+                <p>{airdrop.expirationDate.toDateString()}</p>
               </div>
               <div className='text-zinc-500 font-semibold text-xs flex justify-between mt-1'>
                 <h6>Type</h6>
-                <p>{ airdrop.airdropType }</p>
+                <p>{airdrop.airdropType}</p>
               </div>
             </section>
           </div>
@@ -99,19 +100,19 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
               show={(!dialog || !!address)}
               onClick={onClick}
               className='self-end !px-0 group'
-              width={ dialog ? 76 : 45 }
+              width={dialog ? 76 : 45}
               outline
-              variant={ dialog ? 'secondary' : 'primary'}
+              variant={dialog ? 'secondary' : 'primary'}
               disabled={disabled}
             >
               {
                 dialog
-                ? 'claim' 
-                : <ArrowRightIcon className={`${disabled ? '' : 'group-hover:fill-black'} fill-white`} />
+                  ? 'claim'
+                  : <ArrowRightIcon className={`${disabled ? '' : 'group-hover:fill-black'} fill-white`} />
               }
             </Button>
             {
-              (dialog && address) && 
+              (dialog && address) &&
               <div className="flex gap-2 items-center">
                 <label htmlFor="">gasless</label>
                 <label className="flex relative items-center cursor-pointer">
@@ -127,11 +128,10 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             }
           </div>
         </section>
-        <section className={`flex gap-4 flex-col w-full items-center  justify-center mt-8 ${!(!address && dialog) ? 'hidden': ''}`}>
-          <ConnectWalletButton title='Connect wallet to claim' width={250} />
-          <ConnectRNSDomainButton title="Use RNS to claim" width={250} />
+        <section className={`mt-8 ${!(!address && dialog) ? 'hidden' : ''}`}>
+          <Connect className='flex gap-4 flex-col w-full items-center justify-center' connectWalletTitle='Connect wallet to claim' connectRNSTitle="Use RNS to claim" />
         </section>
-        <section className={`mt-7 ${dialog ? '': 'hidden'}`}>
+        <section className={`mt-7 ${dialog ? '' : 'hidden'}`}>
           <h4 className='font-semibold text-sm'>Description</h4>
           <p className='text-xs text-zinc-400'>nisi porta lorem mollis aliquam ut porttitor leo a diam sollicitudin tempor id eu nisl nunc mi ipsum faucibus vitae aliquet nec ullamcorper sit amet risus nullam eget felis eget nunc lobortis mattis aliquam faucibus purus in massa tempor nec</p>
         </section>
