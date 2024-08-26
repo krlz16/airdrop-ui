@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext'
 import ConnectWalletButton from '../navigation/ConnectWalletButton'
 import Badge from '../common/Badge'
 import { IAirdrop } from '@/interface/IAirdrop'
+import ConnectRNSDomainButton from '../navigation/ConnectRNSDomainButton'
 
 type props = {
   background?: string
@@ -126,8 +127,9 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             }
           </div>
         </section>
-        <section className={`flex justify-center mt-8 ${!(!address && dialog) ? 'hidden': ''}`}>
-          <ConnectWalletButton title='Connect wallet to claim' width={230} />
+        <section className={`flex gap-4 flex-col w-full items-center  justify-center mt-8 ${!(!address && dialog) ? 'hidden': ''}`}>
+          <ConnectWalletButton title='Connect wallet to claim' width={250} />
+          <ConnectRNSDomainButton title="Use RNS to claim" width={250} />
         </section>
         <section className={`mt-7 ${dialog ? '': 'hidden'}`}>
           <h4 className='font-semibold text-sm'>Description</h4>
