@@ -8,6 +8,10 @@ function Title() {
         <span className='bg-custom-pink'>giveaway</span>
       </span>
       <span className='bg-custom-green w-max'>machine</span>
+      <span className='flex gap-3'>
+        <span className='bg-custom-cyan'>Airdrop</span>
+        <span className='bg-custom-lime'>claim</span>
+      </span>
     </h1>
   )
 }
