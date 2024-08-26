@@ -35,6 +35,7 @@ const useAirdrop = () => {
   const {
     provider,
     address,
+    domain,
     setIsAdmin,
     setTx,
     setAirdropLoading,
@@ -156,7 +157,9 @@ const useAirdrop = () => {
   ) => {
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET)
-      if (gasless) {
+      if (domain) {
+        claimRNSDomain(airdropAddress, amount, proof)
+      } else if (gasless) {
         claimGasless(airdropAddress, amount, proof)
       } else {
         const response = await airdropManager?.claim(
@@ -175,6 +178,28 @@ const useAirdrop = () => {
       setIsLoading(FETCH_STATUS.ERROR)
     }
   }
+  const claimRNSDomain = async (
+    airdropAddress: string,
+    amount: string = '0',
+    proof: string[] = []
+  ) => {
+    try {
+      console.log('claimRNSDomain');
+      console.log('airdropAddress:', airdropAddress);
+      console.log('amount:', amount);
+      console.log('proof:', proof);
+      console.log('address:', address);
+      console.log('domain:', domain);
+
+      const wallet = ethers.Wallet.createRandom();
+
+      // TODO do something here 
+
+    } catch (error) {
+      console.log('error: ', error)
+      setIsLoading(FETCH_STATUS.ERROR)
+    }
+  }
   const claimGasless = async (
     airdropAddress: string,
     amount: string = '0',
@@ -186,7 +211,7 @@ const useAirdrop = () => {
       console.log('amount:', amount);
       console.log('proof:', proof);
       console.log('address:', address);
-      
+
       const metamaskProvider = await MetaMaskWalletProvider.connect()
       const bundlerApiKey = BUNDLER_API_KEY
       const customBundlerUrl = CUSTOM_BUNDLER_URL
@@ -219,22 +244,22 @@ const useAirdrop = () => {
         airdropManagerAddress,
         AirdropAdminAbi.abi
       )
-      const headers = {'Content-Type': 'application/json'}
+      const headers = { 'Content-Type': 'application/json' }
       const bodyCheckWhitelist = {
         "params": [smartAddress]
       }
-      const isWhitelisted = await axios.post(`https://arka.etherspot.io/checkWhitelist?apiKey=${apiKey}&chainId=${chainId}`, bodyCheckWhitelist, {headers: headers})
+      const isWhitelisted = await axios.post(`https://arka.etherspot.io/checkWhitelist?apiKey=${apiKey}&chainId=${chainId}`, bodyCheckWhitelist, { headers: headers })
       console.log('isWhitelisted:', isWhitelisted);
       console.log('isWhitelisted:', isWhitelisted.data.message);
-      
-      if(isWhitelisted.data.message !== "Already added") {
+
+      if (isWhitelisted.data.message !== "Already added") {
         console.log('Whitelisting address');
         const body = {
           "params": [[smartAddress]]
         }
-        const  responseWhitelist = await axios.post(`https://arka.etherspot.io/whitelist?apiKey=${apiKey}&chainId=${chainId}`, body, {headers: headers})
+        const responseWhitelist = await axios.post(`https://arka.etherspot.io/whitelist?apiKey=${apiKey}&chainId=${chainId}`, body, { headers: headers })
         console.log('responseWhitelist:', responseWhitelist);
-      }      
+      }
       const encodedData = airdropAdminContract.interface.encodeFunctionData(
         'claim',
         [airdropAddress, address, amount, proof]
