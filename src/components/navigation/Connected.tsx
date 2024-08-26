@@ -23,7 +23,7 @@ const Connected = () => {
                 <div className="bg-white flex items-center text-center gap-3 rounded-md text-black px-3 py-2">
                     <RifIcon className="w-5 h-5" />
                     <div>
-                        {extractRawDomain()}<span className='text-custom-pink'>.rsk</span>
+                        {extractRawDomain()}<span className='text-custom-pink font-semibold'>.rsk</span>
                     </div>
                 </div>
             ) : (
