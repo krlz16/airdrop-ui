@@ -1,7 +1,4 @@
 'use client'
-import React, { useState } from 'react'
-import ConnectRNSDomainButton from './ConnectRNSDomainButton'
-import ConnectWalletButton from './ConnectWalletButton'
 import { useAuth } from '@/context/AuthContext'
 import MetamaskIcon from '../icons/MetamaskIcon'
 import RifIcon from '../icons/RifIcon'

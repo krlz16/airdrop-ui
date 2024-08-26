@@ -6,11 +6,7 @@ import Connect from './Connect';
 import Connected from './Connected';
 
 function Navbar() {
-  const { address, logout, domain } = useAuth();
-
-  const formatAddress = () => {
-    return `${address.substring(0, 4)}...${address.substring(address.length - 4)}`
-  }
+  const { address } = useAuth();
 
   return (
     <nav className="w-full p-6 flex justify-between z-10 fixed bg-black border-b border-zinc-600">
