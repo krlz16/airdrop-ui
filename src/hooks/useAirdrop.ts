@@ -17,6 +17,7 @@ import {
   EtherspotBundler,
   MetaMaskWalletProvider,
   PrimeSdk,
+  WalletProviderLike,
 } from '@etherspot/prime-sdk'
 
 import AirdropAdminAbi from '@/utils/abi/AirdropManager.json'
@@ -158,7 +159,7 @@ const useAirdrop = () => {
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET)
       if (domain) {
-        claimRNSDomain(airdropAddress, amount, proof)
+        claimWithRNSDomain(airdropAddress, amount, proof)
       } else if (gasless) {
         claimGasless(airdropAddress, amount, proof)
       } else {
@@ -178,13 +179,13 @@ const useAirdrop = () => {
       setIsLoading(FETCH_STATUS.ERROR)
     }
   }
-  const claimRNSDomain = async (
+  const claimWithRNSDomain = async (
     airdropAddress: string,
     amount: string = '0',
     proof: string[] = []
   ) => {
     try {
-      console.log('claimRNSDomain');
+      console.log('claimWithRNSDomain');
       console.log('airdropAddress:', airdropAddress);
       console.log('amount:', amount);
       console.log('proof:', proof);
@@ -195,34 +196,11 @@ const useAirdrop = () => {
       const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
       const connectedWallet = wallet.connect(provider);
 
-      const bundlerApiKey = BUNDLER_API_KEY
-      const customBundlerUrl = CUSTOM_BUNDLER_URL
-      const chainId = Number(CHAIN_ID)
-      const airdropManagerAddress = AIRDROP_MANAGER_ADDRESS
-      const apiKey = ARKA_PUBLIC_KEY
-      if (
-        !bundlerApiKey ||
-        !customBundlerUrl ||
-        !chainId ||
-        !airdropManagerAddress ||
-        !apiKey
-      ) {
-        throw new Error('Missing data for RNSDomain claimer execution')
+      const walletProviderLike: WalletProviderLike = {
+        privateKey: connectedWallet.privateKey
       }
 
-      const primeSdk = new PrimeSdk({
-        privateKey: connectedWallet.privateKey
-      }, {
-        chainId: chainId,
-        entryPointAddress: connectedWallet.address,
-        bundlerProvider: new EtherspotBundler(
-          chainId,
-          bundlerApiKey,
-          customBundlerUrl
-        ),
-      })
-
-      await claimSponsored(airdropAddress, amount, proof, primeSdk, airdropManagerAddress, apiKey, chainId)
+      await claimSponsored(airdropAddress, amount, proof, walletProviderLike)
     } catch (error) {
       console.log('error: ', error)
     }
@@ -239,32 +217,9 @@ const useAirdrop = () => {
       console.log('proof:', proof);
       console.log('address:', address);
 
-      const metamaskProvider = await MetaMaskWalletProvider.connect()
-      const bundlerApiKey = BUNDLER_API_KEY
-      const customBundlerUrl = CUSTOM_BUNDLER_URL
-      const chainId = Number(CHAIN_ID)
-      const airdropManagerAddress = AIRDROP_MANAGER_ADDRESS
-      const apiKey = ARKA_PUBLIC_KEY
-      if (
-        !metamaskProvider ||
-        !bundlerApiKey ||
-        !customBundlerUrl ||
-        !chainId ||
-        !airdropManagerAddress ||
-        !apiKey
-      ) {
-        throw new Error('Missing data for GaslessClaimer execution')
-      }
-      const primeSdk = new PrimeSdk(metamaskProvider, {
-        chainId: chainId,
-        bundlerProvider: new EtherspotBundler(
-          chainId,
-          bundlerApiKey,
-          customBundlerUrl
-        ),
-      })
+      const walletProviderLike: WalletProviderLike = await MetaMaskWalletProvider.connect()
 
-      await claimSponsored(airdropAddress, amount, proof, primeSdk, airdropManagerAddress, apiKey, chainId)
+      await claimSponsored(airdropAddress, amount, proof, walletProviderLike)
     } catch (error) {
       console.log('error: ', error)
     }
@@ -273,12 +228,33 @@ const useAirdrop = () => {
     airdropAddress: string,
     amount: string = '0',
     proof: string[] = [],
-    primeSdk: PrimeSdk,
-    airdropManagerAddress: string,
-    apiKey: string,
-    chainId: number
+    walletProviderLike: WalletProviderLike
   ) => {
     try {
+      const bundlerApiKey = BUNDLER_API_KEY
+      const customBundlerUrl = CUSTOM_BUNDLER_URL
+      const chainId = Number(CHAIN_ID)
+      const airdropManagerAddress = AIRDROP_MANAGER_ADDRESS
+      const apiKey = ARKA_PUBLIC_KEY
+      if (
+        !bundlerApiKey ||
+        !customBundlerUrl ||
+        !chainId ||
+        !airdropManagerAddress ||
+        !apiKey
+      ) {
+        throw new Error('Missing data for RNSDomain claimer execution')
+      }
+
+      const primeSdk = new PrimeSdk(walletProviderLike, {
+        chainId: chainId,
+        bundlerProvider: new EtherspotBundler(
+          chainId,
+          bundlerApiKey,
+          customBundlerUrl
+        ),
+      })
+
       const smartAddress = await primeSdk.getCounterFactualAddress();
       console.log(`EtherspotWallet address: ${smartAddress}`);
       const balance = await primeSdk.getNativeBalance()
