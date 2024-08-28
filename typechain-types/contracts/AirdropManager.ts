@@ -21,7 +21,7 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../../common";
+} from "../common";
 
 export type AirdropInfoStruct = {
   airdropName: string;
@@ -59,6 +59,7 @@ export interface AirdropManagerInterface extends Interface {
       | "allowAddress"
       | "allowAddresses"
       | "claim"
+      | "deployAndAddOpenERC20Airdrop"
       | "disallowAddress"
       | "disallowAddresses"
       | "getAirdropAmountLeft"
@@ -78,7 +79,10 @@ export interface AirdropManagerInterface extends Interface {
   ): FunctionFragment;
 
   getEvent(
-    nameOrSignatureOrTopic: "AirdropAdded" | "AirdropRemoved"
+    nameOrSignatureOrTopic:
+      | "AirdropAdded"
+      | "AirdropDeployed"
+      | "AirdropRemoved"
   ): EventFragment;
 
   encodeFunctionData(
@@ -100,6 +104,10 @@ export interface AirdropManagerInterface extends Interface {
   encodeFunctionData(
     functionFragment: "claim",
     values: [AddressLike, AddressLike, BigNumberish, BytesLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deployAndAddOpenERC20Airdrop",
+    values: [string, AddressLike, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "disallowAddress",
@@ -178,6 +186,10 @@ export interface AirdropManagerInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "deployAndAddOpenERC20Airdrop",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "disallowAddress",
     data: BytesLike
   ): Result;
@@ -226,6 +238,18 @@ export interface AirdropManagerInterface extends Interface {
 }
 
 export namespace AirdropAddedEvent {
+  export type InputTuple = [airdropAddress: AddressLike];
+  export type OutputTuple = [airdropAddress: string];
+  export interface OutputObject {
+    airdropAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace AirdropDeployedEvent {
   export type InputTuple = [airdropAddress: AddressLike];
   export type OutputTuple = [airdropAddress: string];
   export interface OutputObject {
@@ -320,6 +344,18 @@ export interface AirdropManager extends BaseContract {
       proof: BytesLike[]
     ],
     [void],
+    "nonpayable"
+  >;
+
+  deployAndAddOpenERC20Airdrop: TypedContractMethod<
+    [
+      airdropName: string,
+      tokenAddress: AddressLike,
+      totalAirdropAmount: BigNumberish,
+      claimAmount: BigNumberish,
+      expirationDate: BigNumberish
+    ],
+    [string],
     "nonpayable"
   >;
 
@@ -448,6 +484,19 @@ export interface AirdropManager extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "deployAndAddOpenERC20Airdrop"
+  ): TypedContractMethod<
+    [
+      airdropName: string,
+      tokenAddress: AddressLike,
+      totalAirdropAmount: BigNumberish,
+      claimAmount: BigNumberish,
+      expirationDate: BigNumberish
+    ],
+    [string],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "disallowAddress"
   ): TypedContractMethod<
     [airdropAddress: AddressLike, user: AddressLike],
@@ -528,6 +577,13 @@ export interface AirdropManager extends BaseContract {
     AirdropAddedEvent.OutputObject
   >;
   getEvent(
+    key: "AirdropDeployed"
+  ): TypedContractEvent<
+    AirdropDeployedEvent.InputTuple,
+    AirdropDeployedEvent.OutputTuple,
+    AirdropDeployedEvent.OutputObject
+  >;
+  getEvent(
     key: "AirdropRemoved"
   ): TypedContractEvent<
     AirdropRemovedEvent.InputTuple,
@@ -545,6 +601,17 @@ export interface AirdropManager extends BaseContract {
       AirdropAddedEvent.InputTuple,
       AirdropAddedEvent.OutputTuple,
       AirdropAddedEvent.OutputObject
+    >;
+
+    "AirdropDeployed(address)": TypedContractEvent<
+      AirdropDeployedEvent.InputTuple,
+      AirdropDeployedEvent.OutputTuple,
+      AirdropDeployedEvent.OutputObject
+    >;
+    AirdropDeployed: TypedContractEvent<
+      AirdropDeployedEvent.InputTuple,
+      AirdropDeployedEvent.OutputTuple,
+      AirdropDeployedEvent.OutputObject
     >;
 
     "AirdropRemoved(address)": TypedContractEvent<

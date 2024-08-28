@@ -3,12 +3,8 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumberish,
-  BytesLike,
   FunctionFragment,
-  Result,
   Interface,
-  AddressLike,
   ContractRunner,
   ContractMethod,
   Listener,
@@ -18,35 +14,15 @@ import type {
   TypedDeferredTopicFilter,
   TypedEventLog,
   TypedListener,
-  TypedContractMethod,
-} from "../../common";
+} from "../../../common";
 
-export interface IERC1155Interface extends Interface {
-  getFunction(
-    nameOrSignature: "balanceOf" | "safeTransferFrom"
-  ): FunctionFragment;
+export interface StringsInterface extends Interface {}
 
-  encodeFunctionData(
-    functionFragment: "balanceOf",
-    values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "safeTransferFrom",
-    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "safeTransferFrom",
-    data: BytesLike
-  ): Result;
-}
-
-export interface IERC1155 extends BaseContract {
-  connect(runner?: ContractRunner | null): IERC1155;
+export interface Strings extends BaseContract {
+  connect(runner?: ContractRunner | null): Strings;
   waitForDeployment(): Promise<this>;
 
-  interface: IERC1155Interface;
+  interface: StringsInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -85,48 +61,9 @@ export interface IERC1155 extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  balanceOf: TypedContractMethod<
-    [account: AddressLike, id: BigNumberish],
-    [bigint],
-    "view"
-  >;
-
-  safeTransferFrom: TypedContractMethod<
-    [
-      from: AddressLike,
-      to: AddressLike,
-      id: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike
-    ],
-    [void],
-    "nonpayable"
-  >;
-
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
-
-  getFunction(
-    nameOrSignature: "balanceOf"
-  ): TypedContractMethod<
-    [account: AddressLike, id: BigNumberish],
-    [bigint],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "safeTransferFrom"
-  ): TypedContractMethod<
-    [
-      from: AddressLike,
-      to: AddressLike,
-      id: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike
-    ],
-    [void],
-    "nonpayable"
-  >;
 
   filters: {};
 }
