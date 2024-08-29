@@ -4,9 +4,9 @@
 
 import { Contract, Interface, type ContractRunner } from "ethers";
 import type {
-  IAirdrop,
-  IAirdropInterface,
-} from "../../../contracts/Types.sol/IAirdrop";
+  IAirdrop1155,
+  IAirdrop1155Interface,
+} from "../../../contracts/AirdropManager.sol/IAirdrop1155";
 
 const _abi = [
   {
@@ -265,12 +265,15 @@ const _abi = [
   },
 ] as const;
 
-export class IAirdrop__factory {
+export class IAirdrop1155__factory {
   static readonly abi = _abi;
-  static createInterface(): IAirdropInterface {
-    return new Interface(_abi) as IAirdropInterface;
+  static createInterface(): IAirdrop1155Interface {
+    return new Interface(_abi) as IAirdrop1155Interface;
   }
-  static connect(address: string, runner?: ContractRunner | null): IAirdrop {
-    return new Contract(address, _abi, runner) as unknown as IAirdrop;
+  static connect(
+    address: string,
+    runner?: ContractRunner | null
+  ): IAirdrop1155 {
+    return new Contract(address, _abi, runner) as unknown as IAirdrop1155;
   }
 }

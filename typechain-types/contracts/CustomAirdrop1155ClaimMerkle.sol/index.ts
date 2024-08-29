@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { CustomAirdrop1155Merkle } from "./CustomAirdrop1155Merkle";
+export type { IERC1155 } from "./IERC1155";
