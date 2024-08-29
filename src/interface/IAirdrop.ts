@@ -17,3 +17,10 @@ export interface IAirdrop {
     amount: string
   }
 }
+export interface ICreateAirdrop {
+  name: string
+  tokenAddress: string,
+  totalAmount: number,
+  claimAmount: number,
+  expirationDate: string
+}

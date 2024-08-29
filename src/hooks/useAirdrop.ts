@@ -8,7 +8,7 @@ import {
   FETCH_STATUS,
 } from '@/constants'
 import { useAuth } from '@/context/AuthContext'
-import { IAirdrop } from '@/interface/IAirdrop'
+import { IAirdrop, ICreateAirdrop } from '@/interface/IAirdrop'
 import { ethers } from 'ethers'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import merkleData from '@/utils/merkleData.json'
@@ -64,7 +64,6 @@ const useAirdrop = () => {
     const airdropsDetail: IAirdrop[] = []
     for (const air in items) {
       const detail = await airdropManager?.getAirdropInfo(items[Number(air)])
-      console.log('detail: ', detail)
 
       const newAirdrop: IAirdrop = {
         name: detail![0].toString(),
@@ -75,12 +74,6 @@ const useAirdrop = () => {
         expirationDate: new Date(parseFloat(detail![5].toString()) * 1000),
         airdropType: Number(ethers.toBigInt(detail[6])) ? 'merkle' : 'custom',
       }
-      console.log(
-        'airdropamount unformatted is ',
-        ethers.formatEther(detail![3])
-      )
-
-      console.log('airdropamount left is', newAirdrop.airdropAmountLeft)
 
       const balance = await airdropManager.getBalance(newAirdrop.address)
       newAirdrop.balance = Number(ethers.formatEther(balance))
@@ -116,6 +109,7 @@ const useAirdrop = () => {
       )) as boolean
       setIsAdmin(isAdmin)
     }
+    console.log('airdropsDetail: ', airdropsDetail);
     setAirdrops(airdropsDetail)
     setAirdropLoading(false)
   }, [initializeProvider, setAirdropLoading, setIsAdmin, address, setAirdrops])
@@ -147,6 +141,26 @@ const useAirdrop = () => {
     }
   }
 
+  const deployERC20Airdrop = async(airdrop: ICreateAirdrop) => {
+    console.log('airdrop: ', airdrop);
+    const { name, tokenAddress, totalAmount, claimAmount, expirationDate } = airdrop;
+    const date = new Date(expirationDate).getTime() / 1000;
+    const total = ethers.parseEther(totalAmount.toString());
+    const claim = ethers.parseEther(claimAmount.toString());
+    console.log('total: ', total);
+    console.log('date: ', date);
+    try {
+      setIsLoading(FETCH_STATUS.WAIT_WALLET)
+      const response = await airdropManager?.deployAndAddOpenERC20Airdrop(name, tokenAddress, total, claim, date);
+      setIsLoading(FETCH_STATUS.WAIT_TX)
+      setTx(response)
+      await response?.wait()
+      setIsLoading(FETCH_STATUS.COMPLETED)
+    } catch (error) {
+      console.log('error: ', error)
+      setIsLoading(FETCH_STATUS.ERROR)
+    }
+  }
 
   const claim = async (
     airdropAddress: string,
@@ -181,11 +195,6 @@ const useAirdrop = () => {
     proof: string[] = []
   ) => {
     try {
-      console.log('claimGasless');
-      console.log('airdropAddress:', airdropAddress);
-      console.log('amount:', amount);
-      console.log('proof:', proof);
-      console.log('address:', address);
       
       const metamaskProvider = await MetaMaskWalletProvider.connect()
       const bundlerApiKey = BUNDLER_API_KEY
@@ -294,6 +303,7 @@ const useAirdrop = () => {
     setIsLoading,
     claim,
     allowedAddress,
+    deployERC20Airdrop
   }
 }
 

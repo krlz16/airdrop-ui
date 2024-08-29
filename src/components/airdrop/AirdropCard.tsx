@@ -10,6 +10,7 @@ import { IAirdrop } from '@/interface/IAirdrop'
 import MerkleData from '@/utils/merkleData.json'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
+import CopyIcon from '../icons/CopyIcon'
 type props = {
   background?: string
   dialog?: boolean
@@ -21,18 +22,30 @@ type props = {
 function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false, airdrop, onCloseDialog }: props) {
   const { isAdmin, address, gasless, setGasless } = useAuth();
   const [amount, setAmount] = useState<string>('0');
+  const [copied, setCopied] = useState<boolean>(false);
   let disabled = false;
   if (address) disabled = !isAdmin ? (!airdrop.isAllowed || airdrop.isClaimed! || airdrop?.isExpired! || airdrop.balance === 0) : false;
   useEffect(() => {
     if(airdrop.airdropType !== 'merkle') return;
     const claim = MerkleData.claims.find(claim => claim.address.toLowerCase() === address.toLowerCase());
     setAmount(claim?.amount ? ethers.formatUnits(claim?.amount, 18).toString() : '0');
-  }, [address]);
+  }, [address, airdrop.airdropType]);
 
   const copyAddress = (address: string) => {
+    console.log('address: ', address);
+    setCopied(true);
     navigator.clipboard.writeText(address)
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
   }
 
+  const trim1 = (text: string) => {
+    return text.substring(0,4);
+  }
+  const trim2 = (text: string) => {
+    return text.substring(text.length - 4);
+  }
   return (
     <>
       <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full' : 'border p-7 w-[400px]'}`}>
@@ -106,12 +119,22 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             </section>
           </div>
           <div className='w-1/3 flex justify-between flex-col items-end'>
-            <div>
-              {/* <div className='text-zinc-300 mb-2'>
-                0x300
-                <button onClick={() => copyAddress(airdrop.address)}>copy</button>
-                00e0
-              </div> */}
+            <div className=''>
+              <div className='text-zinc-300 mb-2 group'>
+                {
+                  trim1(airdrop.address)
+                }
+                <button className="relative w-4" onClick={() => copyAddress(airdrop.address)}>
+                  {
+                    copied && <span className='absolute -left-4 -top-6 transition-all duration-500'>copied</span>
+                  }
+                  <span className='group-hover:hidden block'>...</span>
+                  <CopyIcon className='group-hover:fill-zinc-300 fill-zinc-500 hidden mr-3 group-hover:block' />
+                </button>
+                {
+                  trim2(airdrop.address)
+                }
+              </div>
               <AirdropIcon />
             </div>
             <Button

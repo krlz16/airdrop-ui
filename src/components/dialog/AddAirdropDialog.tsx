@@ -5,12 +5,13 @@ import useAirdrop from '@/hooks/useAirdrop'
 import { FETCH_STATUS } from '@/constants'
 import { ChangeEvent, useState } from 'react'
 import ContentDialog from './ContentDialog'
+import { ICreateAirdrop } from '@/interface/IAirdrop'
 
 type props = {
   open: boolean
   closeDialog: Function
 }
-const CREATE_AIRDROP_STATE = {
+const CREATE_AIRDROP_STATE: ICreateAirdrop = {
   name: '',
   tokenAddress: '',
   totalAmount: 0,
@@ -19,10 +20,10 @@ const CREATE_AIRDROP_STATE = {
 }
 
 function AddAirdropDialog({ open, closeDialog }: props) {
-  const { isLoading, addAirdrop, setIsLoading, getAllAirdrops } = useAirdrop();
+  const { isLoading, addAirdrop, setIsLoading, getAllAirdrops, deployERC20Airdrop } = useAirdrop();
   const [menu, setMenu] = useState<'add'| 'create'>('add');
-  const [formCompleted, setFormCompleted] = useState<boolean>(false);
-  const [createAirdrop, setCreateAirdrop] = useState(CREATE_AIRDROP_STATE);
+  const [formCompleted, setFormCompleted] = useState<boolean>(true);
+  const [createAirdrop, setCreateAirdrop] = useState<ICreateAirdrop>(CREATE_AIRDROP_STATE);
   const [contractAddress, setContractAddress] = useState<string>('');
   const handleAddAirdrop = () => {
     if (!contractAddress) return
@@ -57,8 +58,9 @@ function AddAirdropDialog({ open, closeDialog }: props) {
     setFormCompleted(true);
   }
 
-  const createNewAirdrop = () => {
+  const createNewAirdrop = async () => {
     setFormCompleted(areAllFieldsFilled());
+    await deployERC20Airdrop(createAirdrop);
     if (areAllFieldsFilled()) {
       // Todos los campos están llenos, procede con la lógica de envío
       console.log("Todos los campos están llenos", createAirdrop);
