@@ -3,9 +3,10 @@ import Input from '../common/Input'
 import Button from '../common/Button'
 import useAirdrop from '@/hooks/useAirdrop'
 import { FETCH_STATUS } from '@/constants'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import ContentDialog from './ContentDialog'
 import { ICreateAirdrop } from '@/interface/IAirdrop'
+import { useAuth } from '@/context/AuthContext'
 
 type props = {
   open: boolean
@@ -21,10 +22,16 @@ const CREATE_AIRDROP_STATE: ICreateAirdrop = {
 
 function AddAirdropDialog({ open, closeDialog }: props) {
   const { isLoading, addAirdrop, setIsLoading, getAllAirdrops, deployERC20Airdrop } = useAirdrop();
+  const { isAdmin, address } = useAuth();
   const [menu, setMenu] = useState<'add'| 'create'>('add');
   const [formCompleted, setFormCompleted] = useState<boolean>(true);
   const [createAirdrop, setCreateAirdrop] = useState<ICreateAirdrop>(CREATE_AIRDROP_STATE);
   const [contractAddress, setContractAddress] = useState<string>('');
+
+  useEffect(() => {
+    setMenu(isAdmin ? 'add' : 'create');
+  }, [isAdmin, address]);
+
   const handleAddAirdrop = () => {
     if (!contractAddress) return
     addAirdrop(contractAddress);
@@ -60,20 +67,15 @@ function AddAirdropDialog({ open, closeDialog }: props) {
 
   const createNewAirdrop = async () => {
     setFormCompleted(areAllFieldsFilled());
-    await deployERC20Airdrop(createAirdrop);
     if (areAllFieldsFilled()) {
-      // Todos los campos están llenos, procede con la lógica de envío
-      console.log("Todos los campos están llenos", createAirdrop);
-    } else {
-      // Al menos un campo está vacío, muestra un error o un mensaje
-      console.log("Por favor, completa todos los campos");
+      await deployERC20Airdrop(createAirdrop);
     }
   }
   return (
     <BaseDialog open={open} closeDialog={handleCloseDialog} className={`${menu === 'add' ? 'w-[430px] h-[370px]' : 'w-[700px] h-[500px]'} bg-black border border-zinc-700 transition-all duration-200`}>
       <div className='w-full h-full flex flex-col'>
         {
-          <ul className='flex gap-4 mb-5'>
+          isAdmin && <ul className='flex gap-4 mb-5'>
             <li className={`cursor-pointer hover:text-zinc-300 text-sm font-medium text-zinc-400 mb-3 pb-1 ${menu === 'add' ? 'border-b-2': ''}`}>
               <button onClick={() => setMenu('add')}>
                 Add AirDrop
@@ -184,9 +186,12 @@ function AddAirdropDialog({ open, closeDialog }: props) {
                     />
                   </div>
                   <div className='w-1/2 p-2'>
-                    <label htmlFor="name" className='font-bold text-base ml-3 mb-1 block'>Expiration Date</label>
+                    <label htmlFor="name" className='font-bold text-base ml-3 mb-1 flex justify-between items-center'>
+                      Expiration Date
+                      <span className='text-zinc-600 text-xs mr-2'>Time Zone GMT+0</span>
+                      </label>
                     <Input
-                      type='date'
+                      type='datetime-local'
                       value={createAirdrop.expirationDate}
                       onChange={(e) => handleFormCreateAirdrop(e)}
                       id='expirationDate'

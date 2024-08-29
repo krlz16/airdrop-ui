@@ -142,13 +142,13 @@ const useAirdrop = () => {
   }
 
   const deployERC20Airdrop = async(airdrop: ICreateAirdrop) => {
-    console.log('airdrop: ', airdrop);
     const { name, tokenAddress, totalAmount, claimAmount, expirationDate } = airdrop;
-    const date = new Date(expirationDate).getTime() / 1000;
+
+    const formatDate = new Date(expirationDate + ':00Z');
+    const date = formatDate.getTime() / 1000;
+
     const total = ethers.parseEther(totalAmount.toString());
     const claim = ethers.parseEther(claimAmount.toString());
-    console.log('total: ', total);
-    console.log('date: ', date);
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET)
       const response = await airdropManager?.deployAndAddOpenERC20Airdrop(name, tokenAddress, total, claim, date);

@@ -83,6 +83,7 @@ function AirdropDialog({ open, closeDialog }: props) {
                   <form className='mt-6'>
                     <label htmlFor="name" className='font-bold text-base ml-3 mb-3 block'>User address</label>
                     <Input
+                      name='walletAddress'
                       value={walletAddress}
                       onChange={(e) => setWalletAddress(e.target.value)}
                       id='name'

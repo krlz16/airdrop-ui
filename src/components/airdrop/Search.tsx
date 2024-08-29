@@ -7,6 +7,7 @@ function Search() {
     <div className="border border-white rounded-full flex px-3 gap-2 items-center">
       <SearchIcon className="h-10" />
       <Input
+        name='search'
         value={''}
         onChange={() => null}
         className='text-xl outline-none'

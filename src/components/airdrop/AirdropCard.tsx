@@ -11,6 +11,7 @@ import MerkleData from '@/utils/merkleData.json'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import CopyIcon from '../icons/CopyIcon'
+import { formatDate } from '@/utils/formatDate'
 type props = {
   background?: string
   dialog?: boolean
@@ -32,7 +33,6 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
   }, [address, airdrop.airdropType]);
 
   const copyAddress = (address: string) => {
-    console.log('address: ', address);
     setCopied(true);
     navigator.clipboard.writeText(address)
     setTimeout(() => {
@@ -48,7 +48,7 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
   }
   return (
     <>
-      <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full' : 'border p-7 w-[400px]'}`}>
+      <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full' : 'border p-6 w-[400px]'}`}>
         <div className={`!absolute -top-3 right-0 px-2 flex gap-2 ${!dialog ? '': 'hidden'}`}>
           {
             (!airdrop.isAllowed && address) &&
@@ -108,18 +108,18 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
                 <h6>Total available</h6>
                 <p>{ airdrop.airdropAmountLeft }</p>
               </div>
-              <div className='text-zinc-500 font-semibold text-xs flex justify-between mt-2'>
-                <h6>Expiration date</h6>
-                <p>{ airdrop.expirationDate.toDateString() }</p>
-              </div>
               <div className='text-zinc-500 font-semibold text-xs flex justify-between mt-1'>
                 <h6>Type</h6>
                 <p>{ airdrop.airdropType }</p>
               </div>
+              <div className='text-zinc-500 font-semibold text-xs flex justify-between mt-2'>
+                <h6>Expiration</h6>
+                <p>{ formatDate(airdrop.expirationDate) }</p>
+              </div>
             </section>
           </div>
           <div className='w-1/3 flex justify-between flex-col items-end'>
-            <div className=''>
+            <div className='mt-1'>
               <div className='text-zinc-300 mb-2 group'>
                 {
                   trim1(airdrop.address)
