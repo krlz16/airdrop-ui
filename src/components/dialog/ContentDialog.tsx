@@ -1,7 +1,6 @@
 import { EXPLORER, FETCH_STATUS } from '@/constants'
 import React from 'react'
 import Button from '../common/Button'
-import useAirdrop from '@/hooks/useAirdrop'
 import { useAuth } from '@/context/AuthContext'
 
 type props = {
@@ -39,9 +38,10 @@ function ContentDialog({ status, onClose, loadingTitle, createdTitle, initialCon
       {
         status === FETCH_STATUS.COMPLETED &&
         <>
-          <h2 className='bg-custom-green px-2 text-2xl text-black w-max text-center font-bold mb-10'>
+          <h2 className='bg-custom-green px-2 text-2xl text-black w-max text-center font-bold'>
             { createdTitle }
           </h2>
+          <a href={`${EXPLORER}/tx/${tx?.hash}`} target="_blank" rel="noopener noreferrer" className='my-10 underline'>view transaction</a>
           <Button
             onClick={onClose}
             width={80}

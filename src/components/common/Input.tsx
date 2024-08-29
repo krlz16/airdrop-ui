@@ -9,16 +9,19 @@ type props = {
   height?: number
   id?: string | undefined
   value: string | number | readonly string[] | undefined
+  name: string
   onChange: ChangeEventHandler<HTMLInputElement> | undefined
 }
 function Input({
-  placeholder, type = 'text',
+  placeholder,
+  type = 'text',
   className,
   border = true,
   height = 36,
   id = undefined,
   value,
-  onChange
+  onChange,
+  name
   }: props
   ) {
 
@@ -27,6 +30,7 @@ function Input({
 
   return (
     <input
+      name={name}
       value={value}
       style={{ height }}
       className={`${className} ${classNames(

@@ -27,7 +27,12 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
     if(airdrop.airdropType !== 'merkle') return;
     const claim = MerkleData.claims.find(claim => claim.address.toLowerCase() === address.toLowerCase());
     setAmount(claim?.amount ? ethers.formatUnits(claim?.amount, 18).toString() : '0');
-  }, [address])
+  }, [address]);
+
+  const copyAddress = (address: string) => {
+    navigator.clipboard.writeText(address)
+  }
+
   return (
     <>
       <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full' : 'border p-7 w-[400px]'}`}>
@@ -101,7 +106,14 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             </section>
           </div>
           <div className='w-1/3 flex justify-between flex-col items-end'>
-            <AirdropIcon />
+            <div>
+              {/* <div className='text-zinc-300 mb-2'>
+                0x300
+                <button onClick={() => copyAddress(airdrop.address)}>copy</button>
+                00e0
+              </div> */}
+              <AirdropIcon />
+            </div>
             <Button
               show={(!dialog || !!address)}
               onClick={onClick}

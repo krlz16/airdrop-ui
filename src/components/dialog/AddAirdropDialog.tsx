@@ -3,15 +3,26 @@ import Input from '../common/Input'
 import Button from '../common/Button'
 import useAirdrop from '@/hooks/useAirdrop'
 import { FETCH_STATUS } from '@/constants'
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import ContentDialog from './ContentDialog'
 
 type props = {
   open: boolean
   closeDialog: Function
 }
+const CREATE_AIRDROP_STATE = {
+  name: '',
+  tokenAddress: '',
+  totalAmount: 0,
+  claimAmount: 0,
+  expirationDate: ''
+}
+
 function AddAirdropDialog({ open, closeDialog }: props) {
   const { isLoading, addAirdrop, setIsLoading, getAllAirdrops } = useAirdrop();
+  const [menu, setMenu] = useState<'add'| 'create'>('add');
+  const [formCompleted, setFormCompleted] = useState<boolean>(false);
+  const [createAirdrop, setCreateAirdrop] = useState(CREATE_AIRDROP_STATE);
   const [contractAddress, setContractAddress] = useState<string>('');
   const handleAddAirdrop = () => {
     if (!contractAddress) return
@@ -21,6 +32,9 @@ function AddAirdropDialog({ open, closeDialog }: props) {
     closeDialog();
     setIsLoading(FETCH_STATUS.INIT);
     setContractAddress('');
+    setMenu('add');
+    setCreateAirdrop(CREATE_AIRDROP_STATE);
+    setFormCompleted(true);
   }
   const handleReset = () => {
     if (isLoading === FETCH_STATUS.COMPLETED) {
@@ -30,46 +44,188 @@ function AddAirdropDialog({ open, closeDialog }: props) {
     }
     setIsLoading(FETCH_STATUS.INIT);
   }
+
+  const areAllFieldsFilled = () => {
+    return Object.values(createAirdrop).every(value => value !== '' && value !== 0);
+  };
+
+  const handleFormCreateAirdrop = (e: ChangeEvent<HTMLInputElement>) => {
+    setCreateAirdrop((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value
+    }));
+    setFormCompleted(true);
+  }
+
+  const createNewAirdrop = () => {
+    setFormCompleted(areAllFieldsFilled());
+    if (areAllFieldsFilled()) {
+      // Todos los campos están llenos, procede con la lógica de envío
+      console.log("Todos los campos están llenos", createAirdrop);
+    } else {
+      // Al menos un campo está vacío, muestra un error o un mensaje
+      console.log("Por favor, completa todos los campos");
+    }
+  }
   return (
-    <BaseDialog open={open} closeDialog={handleCloseDialog} className='w-[430px] h-[320px] bg-black border border-zinc-700'>
-      <ContentDialog
-        initialContent={
-          <>
-            <h2 className='bg-custom-green mt-1 font-bold text-xl text-black w-max px-1 items-start'>ADD AIRDROP</h2>
-            <form className='w-full mt-7 items-center'>
-              <label htmlFor="name" className='font-bold text-base ml-3 mb-3 block'>Airdrop Contract Address</label>
-              <Input
-                value={contractAddress}
-                onChange={(e) => setContractAddress(e.target.value)}
-                id='name'
-                placeholder='contract address'
-                height={40}  
-              />
-            </form>
-            <div className='w-full flex mt-16 justify-between'>
-              <Button
-                onClick={() => handleCloseDialog()}
-                width={80}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => handleAddAirdrop()}
-                variant='secondary'
-                outline
-                width={120}
-              >
-                Add Airdrop
-              </Button>
-            </div>
-          </>
+    <BaseDialog open={open} closeDialog={handleCloseDialog} className={`${menu === 'add' ? 'w-[430px] h-[370px]' : 'w-[700px] h-[500px]'} bg-black border border-zinc-700 transition-all duration-200`}>
+      <div className='w-full h-full flex flex-col'>
+        {
+          <ul className='flex gap-4 mb-5'>
+            <li className={`cursor-pointer hover:text-zinc-300 text-sm font-medium text-zinc-400 mb-3 pb-1 ${menu === 'add' ? 'border-b-2': ''}`}>
+              <button onClick={() => setMenu('add')}>
+                Add AirDrop
+              </button>
+            </li>
+            {
+              <li className={`cursor-pointer hover:text-zinc-300 text-sm font-medium text-zinc-400 mb-3 ${menu === 'create' ? 'border-b-2': ''}`}>
+                <button onClick={() => setMenu('create')}>
+                  Create AirDrop
+                </button>
+              </li>
+            }
+          </ul>
         }
-        status={isLoading}
-        loadingTitle='Adding airdrop'
-        createdTitle='AirDrop was Created'
-        onClose={() => handleReset()}
-        btnError='try again'
-      />
+        {
+          menu === 'add' &&
+            <ContentDialog
+              initialContent={
+                <>
+                  <h2 className='bg-custom-green mt-1 font-bold text-xl text-black w-max px-1 items-start'>ADD AIRDROP</h2>
+                  <form className='w-full mt-7 items-center'>
+                    <label htmlFor="name" className='font-bold text-base ml-3 mb-3 block'>Airdrop Contract Address</label>
+                    <Input
+                      value={contractAddress}
+                      onChange={(e) => setContractAddress(e.target.value)}
+                      id='name'
+                      name='name'
+                      placeholder='contract address'
+                      height={40}  
+                    />
+                  </form>
+                  <div className='w-full flex mt-16 justify-between'>
+                    <Button
+                      onClick={() => handleCloseDialog()}
+                      width={80}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => handleAddAirdrop()}
+                      variant='secondary'
+                      outline
+                      width={120}
+                    >
+                      Add Airdrop
+                    </Button>
+                  </div>
+                </>
+              }
+              status={isLoading}
+              loadingTitle='Adding airdrop'
+              createdTitle='AirDrop was added'
+              onClose={() => handleReset()}
+              btnError='try again'
+            />
+        }
+        {
+          menu === 'create' &&
+          <ContentDialog
+            initialContent={
+              <>
+                <h2 className='bg-custom-green mt-1 font-bold text-xl text-black w-max px-1 items-start'>CREATE AIRDROP</h2>
+                <form className='w-full mt-7 items-center flex flex-wrap'>
+                  <div className='w-1/2 p-1'>
+                    <label htmlFor="name" className='font-bold text-base ml-3 mb-1 block'>Airdrop Name</label>
+                    <Input
+                      name="name"
+                      value={createAirdrop.name}
+                      onChange={(e) => handleFormCreateAirdrop(e)}
+                      id='name'
+                      placeholder='name'
+                      height={35}  
+                    />
+                  </div>
+                  <div className='w-1/2 p-2'>
+                    <label htmlFor="name" className='font-bold text-base ml-3 mb-1 block'>Token Address</label>
+                    <Input
+                      value={createAirdrop.tokenAddress}
+                      onChange={(e) => handleFormCreateAirdrop(e)}
+                      id='tokenAddress'
+                      name='tokenAddress'
+                      placeholder='Token address'
+                      height={35}  
+                    />
+                  </div>
+                  <div className='w-1/2 p-2'>
+                    <label htmlFor="name" className='font-bold text-base ml-3 mb-1 block'>Total amount</label>
+                    <Input
+                      type='number'
+                      value={createAirdrop.totalAmount}
+                      onChange={(e) => handleFormCreateAirdrop(e)}
+                      id='totalAmount'
+                      name='totalAmount'
+                      placeholder='Total amount'
+                      height={35}  
+                    />
+                  </div>
+                  <div className='w-1/2 p-2'>
+                    <label htmlFor="name" className='font-bold text-base ml-3 mb-1 block'>Claim amount</label>
+                    <Input
+                      type='number'
+                      value={createAirdrop.claimAmount}
+                      onChange={(e) => handleFormCreateAirdrop(e)}
+                      id='claimAmount'
+                      name='claimAmount'
+                      placeholder='Claim amount'
+                      height={35}  
+                    />
+                  </div>
+                  <div className='w-1/2 p-2'>
+                    <label htmlFor="name" className='font-bold text-base ml-3 mb-1 block'>Expiration Date</label>
+                    <Input
+                      type='date'
+                      value={createAirdrop.expirationDate}
+                      onChange={(e) => handleFormCreateAirdrop(e)}
+                      id='expirationDate'
+                      name='expirationDate'
+                      placeholder='contract address'
+                      height={35}  
+                    />
+                  </div>
+                </form>
+                <div className='italic text-red-500 my-2'>
+                  {
+                    !formCompleted && 'All fields are required'
+                  }
+                </div>
+                <div className='w-full flex mt-4 justify-between'>
+                  <Button
+                    outline
+                    onClick={() => handleCloseDialog()}
+                    width={80}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => createNewAirdrop()}
+                    variant='secondary'
+                    outline
+                    width={140}
+                  >
+                    Create Airdrop
+                  </Button>
+                </div>
+              </>
+            }
+            status={isLoading}
+            loadingTitle='Creating airdrop'
+            createdTitle='AirDrop was Created'
+            onClose={() => handleReset()}
+            btnError='try again'
+          />
+        }
+      </div>
     </BaseDialog>
   )
 }
