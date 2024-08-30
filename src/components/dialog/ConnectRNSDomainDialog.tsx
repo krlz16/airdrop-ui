@@ -113,7 +113,7 @@ function ConnectRNSDomainDialog({ closeDialog, open }: props) {
             </div>
             <div className='h-full w-full ml-4 text-zinc-300 font-semibold text-xs '>
               <span>Don't you have your RNS domain yet? Go to  <a
-                href="https://beta.manager.rns.rifos.org/"
+                href="https://testnet.manager.rns.rifos.org/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:underline text-custom-orange mt-4"
