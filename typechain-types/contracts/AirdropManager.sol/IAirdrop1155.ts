@@ -49,7 +49,7 @@ export type AirdropInfoStructOutput = [
   airdropType: bigint;
 };
 
-export interface IAirdropInterface extends Interface {
+export interface IAirdrop1155Interface extends Interface {
   getFunction(
     nameOrSignature:
       | "allowAddress"
@@ -171,11 +171,11 @@ export interface IAirdropInterface extends Interface {
   decodeFunctionResult(functionFragment: "setRoot", data: BytesLike): Result;
 }
 
-export interface IAirdrop extends BaseContract {
-  connect(runner?: ContractRunner | null): IAirdrop;
+export interface IAirdrop1155 extends BaseContract {
+  connect(runner?: ContractRunner | null): IAirdrop1155;
   waitForDeployment(): Promise<this>;
 
-  interface: IAirdropInterface;
+  interface: IAirdrop1155Interface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,

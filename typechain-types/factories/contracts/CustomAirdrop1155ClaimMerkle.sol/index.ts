@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { CustomAirdrop1155Merkle__factory } from "./CustomAirdrop1155Merkle__factory";
+export { IERC1155__factory } from "./IERC1155__factory";

@@ -4,9 +4,9 @@
 
 import { Contract, Interface, type ContractRunner } from "ethers";
 import type {
-  IERC20,
-  IERC20Interface,
-} from "../../../contracts/Types.sol/IERC20";
+  IERC1155,
+  IERC1155Interface,
+} from "../../../contracts/CustomAirdrop1155ClaimMerkle.sol/IERC1155";
 
 const _abi = [
   {
@@ -15,6 +15,11 @@ const _abi = [
         internalType: "address",
         name: "account",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
       },
     ],
     name: "balanceOf",
@@ -32,28 +37,43 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        internalType: "address",
         name: "to",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
       },
       {
         internalType: "uint256",
         name: "amount",
         type: "uint256",
       },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
     ],
-    name: "transfer",
+    name: "safeTransferFrom",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
 ] as const;
 
-export class IERC20__factory {
+export class IERC1155__factory {
   static readonly abi = _abi;
-  static createInterface(): IERC20Interface {
-    return new Interface(_abi) as IERC20Interface;
+  static createInterface(): IERC1155Interface {
+    return new Interface(_abi) as IERC1155Interface;
   }
-  static connect(address: string, runner?: ContractRunner | null): IERC20 {
-    return new Contract(address, _abi, runner) as unknown as IERC20;
+  static connect(address: string, runner?: ContractRunner | null): IERC1155 {
+    return new Contract(address, _abi, runner) as unknown as IERC1155;
   }
 }
