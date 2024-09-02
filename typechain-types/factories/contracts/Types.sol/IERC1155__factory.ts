@@ -6,7 +6,7 @@ import { Contract, Interface, type ContractRunner } from "ethers";
 import type {
   IERC1155,
   IERC1155Interface,
-} from "../../../contracts/CustomAirdrop1155.sol/IERC1155";
+} from "../../../contracts/Types.sol/IERC1155";
 
 const _abi = [
   {

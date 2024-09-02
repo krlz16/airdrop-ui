@@ -21,7 +21,7 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../../common";
+} from "../common";
 
 export type AirdropInfoStruct = {
   airdropName: string;
@@ -51,14 +51,10 @@ export type AirdropInfoStructOutput = [
   airdropType: bigint;
 };
 
-export interface CustomAirdrop1155Interface extends Interface {
+export interface OpenAirdropERC20Interface extends Interface {
   getFunction(
     nameOrSignature:
-      | "allowAddress"
-      | "allowAddresses"
       | "claim"
-      | "disallowAddress"
-      | "disallowAddresses"
       | "getAirdropAmountLeft"
       | "getAirdropInfo"
       | "getBalance"
@@ -70,7 +66,6 @@ export interface CustomAirdrop1155Interface extends Interface {
       | "hasClaimed"
       | "hasExpired"
       | "isAllowed"
-      | "onERC1155Received"
       | "owner"
       | "renounceOwnership"
       | "transferOwnership"
@@ -85,24 +80,8 @@ export interface CustomAirdrop1155Interface extends Interface {
   ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "allowAddress",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "allowAddresses",
-    values: [AddressLike[]]
-  ): string;
-  encodeFunctionData(
     functionFragment: "claim",
     values: [AddressLike, BigNumberish, BytesLike[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "disallowAddress",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "disallowAddresses",
-    values: [AddressLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getAirdropAmountLeft",
@@ -148,10 +127,6 @@ export interface CustomAirdrop1155Interface extends Interface {
     functionFragment: "isAllowed",
     values: [AddressLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "onERC1155Received",
-    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -162,23 +137,7 @@ export interface CustomAirdrop1155Interface extends Interface {
     values: [AddressLike]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "allowAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "allowAddresses",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "disallowAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "disallowAddresses",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getAirdropAmountLeft",
     data: BytesLike
@@ -211,10 +170,6 @@ export interface CustomAirdrop1155Interface extends Interface {
   decodeFunctionResult(functionFragment: "hasClaimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasExpired", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isAllowed", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "onERC1155Received",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -276,11 +231,11 @@ export namespace OwnershipTransferredEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface CustomAirdrop1155 extends BaseContract {
-  connect(runner?: ContractRunner | null): CustomAirdrop1155;
+export interface OpenAirdropERC20 extends BaseContract {
+  connect(runner?: ContractRunner | null): OpenAirdropERC20;
   waitForDeployment(): Promise<this>;
 
-  interface: CustomAirdrop1155Interface;
+  interface: OpenAirdropERC20Interface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -319,32 +274,8 @@ export interface CustomAirdrop1155 extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  allowAddress: TypedContractMethod<
-    [_address: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  allowAddresses: TypedContractMethod<
-    [addresses: AddressLike[]],
-    [void],
-    "nonpayable"
-  >;
-
   claim: TypedContractMethod<
     [user: AddressLike, amount: BigNumberish, proof: BytesLike[]],
-    [void],
-    "nonpayable"
-  >;
-
-  disallowAddress: TypedContractMethod<
-    [_address: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  disallowAddresses: TypedContractMethod<
-    [addresses: AddressLike[]],
     [void],
     "nonpayable"
   >;
@@ -369,19 +300,7 @@ export interface CustomAirdrop1155 extends BaseContract {
 
   hasExpired: TypedContractMethod<[], [boolean], "view">;
 
-  isAllowed: TypedContractMethod<[_address: AddressLike], [boolean], "view">;
-
-  onERC1155Received: TypedContractMethod<
-    [
-      operator: AddressLike,
-      from: AddressLike,
-      id: BigNumberish,
-      value: BigNumberish,
-      data: BytesLike
-    ],
-    [string],
-    "view"
-  >;
+  isAllowed: TypedContractMethod<[user: AddressLike], [boolean], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -398,24 +317,12 @@ export interface CustomAirdrop1155 extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "allowAddress"
-  ): TypedContractMethod<[_address: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "allowAddresses"
-  ): TypedContractMethod<[addresses: AddressLike[]], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "claim"
   ): TypedContractMethod<
     [user: AddressLike, amount: BigNumberish, proof: BytesLike[]],
     [void],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "disallowAddress"
-  ): TypedContractMethod<[_address: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "disallowAddresses"
-  ): TypedContractMethod<[addresses: AddressLike[]], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "getAirdropAmountLeft"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -448,20 +355,7 @@ export interface CustomAirdrop1155 extends BaseContract {
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "isAllowed"
-  ): TypedContractMethod<[_address: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "onERC1155Received"
-  ): TypedContractMethod<
-    [
-      operator: AddressLike,
-      from: AddressLike,
-      id: BigNumberish,
-      value: BigNumberish,
-      data: BytesLike
-    ],
-    [string],
-    "view"
-  >;
+  ): TypedContractMethod<[user: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
