@@ -21,6 +21,7 @@ import {
 
 import AirdropAdminAbi from '@/utils/abi/AirdropManager.json'
 import axios from 'axios'
+import { sponsoredCall } from '@/utils/SponsoredCall'
 
 const useAirdrop = () => {
   const RPC_PROVIDER = new ethers.JsonRpcProvider(
@@ -39,6 +40,7 @@ const useAirdrop = () => {
     setTx,
     setAirdropLoading,
     setAirdrops,
+    gasless
   } = useAuth()
 
   const initializeProvider = useCallback(async () => {
@@ -151,10 +153,24 @@ const useAirdrop = () => {
     const claim = ethers.parseEther(claimAmount.toString());
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET)
-      const response = await airdropManager?.deployAndAddOpenERC20Airdrop(name, tokenAddress, total, claim, date);
-      setIsLoading(FETCH_STATUS.WAIT_TX)
-      setTx(response)
-      await response?.wait()
+      if(gasless) {
+        if(!airdropManager) {
+          throw new Error('AirdropManager not initialized');
+        }
+        const txReceipt = await sponsoredCall(
+          airdropManager,
+          'deployAndAddOpenERC20Airdrop',
+          [name, tokenAddress, total, claim, date],
+          AIRDROP_MANAGER_ADDRESS!
+        )
+        setIsLoading(FETCH_STATUS.WAIT_TX)
+        setTx(txReceipt.transactionHash)
+      } else {
+        const response = await airdropManager?.deployAndAddOpenERC20Airdrop(name, tokenAddress, total, claim, date);
+        setIsLoading(FETCH_STATUS.WAIT_TX)
+        setTx(response)
+        await response?.wait()
+      }
       setIsLoading(FETCH_STATUS.COMPLETED)
     } catch (error) {
       console.log('error: ', error)

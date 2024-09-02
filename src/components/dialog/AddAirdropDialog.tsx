@@ -22,7 +22,7 @@ const CREATE_AIRDROP_STATE: ICreateAirdrop = {
 
 function AddAirdropDialog({ open, closeDialog }: props) {
   const { isLoading, addAirdrop, setIsLoading, getAllAirdrops, deployERC20Airdrop } = useAirdrop();
-  const { isAdmin, address } = useAuth();
+  const { isAdmin, address,  gasless, setGasless  } = useAuth();
   const [menu, setMenu] = useState<'add'| 'create'>('add');
   const [formCompleted, setFormCompleted] = useState<boolean>(true);
   const [createAirdrop, setCreateAirdrop] = useState<ICreateAirdrop>(CREATE_AIRDROP_STATE);
