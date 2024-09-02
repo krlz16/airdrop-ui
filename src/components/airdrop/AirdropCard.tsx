@@ -37,7 +37,7 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
     navigator.clipboard.writeText(address)
     setTimeout(() => {
       setCopied(false);
-    }, 2000);
+    }, 1000);
   }
 
   const trim1 = (text: string) => {
@@ -48,8 +48,16 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
   }
   return (
     <>
-      <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full' : 'border p-6 w-[400px]'}`}>
-        <div className={`!absolute -top-3 right-0 px-2 flex gap-2 ${!dialog ? '': 'hidden'}`}>
+      <article className={`${(disabled && !dialog) ? 'cursor-not-allowed bg-zinc-950 border-zinc-700' : 'border-white'} rounded-[20px] justify-between gap-2 relative ${dialog ? 'w-full h-full' : 'border p-6 w-[400px]'}`}>
+        <div className={`!absolute w-full justify-end -top-4 right-0 px-2 flex gap-2 ${!dialog ? '': 'hidden'}`}>
+          {
+            (airdrop.new) &&
+              <Badge
+                color='new'
+                title='New'
+                isNew
+              />
+          }
           {
             (!airdrop.isAllowed && address) &&
               <Badge
@@ -75,7 +83,7 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             (airdrop.balance === 0 && address) &&
             <Badge
               color='cyan'
-              title='No Balance'
+              title='Insufficient balance'
             />
           }
           {
@@ -95,7 +103,7 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             )
           }
         </div>
-        <section className='flex w-full'>
+        <section className='flex w-full h-full'>
           <div className='w-2/3'>
             <h3 className={`${background} w-max font-semibold text-xl px-1 text-black`}>{ airdrop.name }</h3>
             <ProgressBar value={airdrop.progress!} background={background} />
@@ -104,10 +112,13 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
                 <h6>Amount to receive</h6>
                 <p>{airdrop.airdropType === 'merkle' ? amount : airdrop.claimAmount }</p>
               </div>
-              <div className='flex justify-between mt-2'>
-                <h6>Total available</h6>
-                <p>{ airdrop.airdropAmountLeft }</p>
-              </div>
+              {
+                airdrop.balance !== 0 && 
+                <div className='flex justify-between mt-2'>
+                  <h6>Available to claim</h6>
+                  <p>{ airdrop.airdropAmountLeft }</p>
+                </div>
+              }
               <div className='text-zinc-500 font-semibold text-xs flex justify-between mt-1'>
                 <h6>Type</h6>
                 <p>{ airdrop.airdropType }</p>
@@ -121,19 +132,14 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
           <div className='w-1/3 flex justify-between flex-col items-end'>
             <div className='mt-1'>
               <div className='text-zinc-300 mb-2 group'>
-                {
-                  trim1(airdrop.address)
-                }
+                <span>{trim1(airdrop.address)}...</span>
+                <span>{trim2(airdrop.address)}</span>
                 <button className="relative w-4" onClick={() => copyAddress(airdrop.address)}>
                   {
                     copied && <span className='absolute -left-4 -top-6 transition-all duration-500'>copied</span>
                   }
-                  <span className='group-hover:hidden block'>...</span>
-                  <CopyIcon className='group-hover:fill-zinc-300 fill-zinc-500 hidden mr-3 group-hover:block' />
+                  <CopyIcon className='group-hover:fill-zinc-200 fill-zinc-400 relative w-5 h-4' />
                 </button>
-                {
-                  trim2(airdrop.address)
-                }
               </div>
               <AirdropIcon />
             </div>
@@ -154,8 +160,8 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             </Button>
             {
               (dialog && address) && 
-              <div className="flex gap-2 items-center">
-                <label htmlFor="">gasless</label>
+              <div className="flex gap-2 items-center mt-2">
+                <label htmlFor="" className='text-zinc-400'>gasless</label>
                 <label className="flex relative items-center cursor-pointer">
                   <input
                     checked={gasless}
@@ -171,10 +177,6 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
         </section>
         <section className={`flex justify-center mt-8 ${!(!address && dialog) ? 'hidden': ''}`}>
           <ConnectWalletButton title='Connect wallet to claim' width={230} />
-        </section>
-        <section className={`mt-7 ${dialog ? '': 'hidden'}`}>
-          <h4 className='font-semibold text-sm'>Description</h4>
-          <p className='text-xs text-zinc-400'>nisi porta lorem mollis aliquam ut porttitor leo a diam sollicitudin tempor id eu nisl nunc mi ipsum faucibus vitae aliquet nec ullamcorper sit amet risus nullam eget felis eget nunc lobortis mattis aliquam faucibus purus in massa tempor nec</p>
         </section>
       </article>
     </>

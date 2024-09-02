@@ -10,6 +10,7 @@ export interface IAirdrop {
   isAllowed?: boolean
   isExpired?: boolean
   balance?: number
+  new?: boolean
   airdropType: 'custom' | 'merkle',
   merkle?: {
     address: string
