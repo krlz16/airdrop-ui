@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [airdropLoading, setAirdropLoading] = useState<boolean>(false);
   const [tx, setTx] = useState<ContractTransactionResponse>();
   const [airdrops, setAirdrops] = useState<IAirdrop[]>();
-  const [gasless, setGasless] = useState<boolean>(false);
+  const [gasless, setGasless] = useState<boolean>(true);
 
   const [provider, setProvider] = useState<ethers.BrowserProvider | undefined>(
     undefined

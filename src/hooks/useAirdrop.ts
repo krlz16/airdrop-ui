@@ -9,7 +9,7 @@ import {
 } from '@/constants'
 import { useAuth } from '@/context/AuthContext'
 import { IAirdrop, ICreateAirdrop } from '@/interface/IAirdrop'
-import { ethers } from 'ethers'
+import { ContractTransactionResponse, ethers } from 'ethers'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import merkleData from '@/utils/merkleData.json'
 import { AirdropManager, AirdropManager__factory } from '../../typechain-types'
@@ -222,7 +222,6 @@ const useAirdrop = () => {
       const smartAddress = await primeSdk.getCounterFactualAddress();
       console.log(`EtherspotWallet address: ${smartAddress}`);
       const balance = await primeSdk.getNativeBalance()
-      console.log('balance is:', balance)
       const airdropAdminContract = new ethers.Contract(
         airdropManagerAddress,
         AirdropAdminAbi.abi
@@ -232,8 +231,6 @@ const useAirdrop = () => {
         "params": [smartAddress]
       }
       const isWhitelisted = await axios.post(`https://arka.etherspot.io/checkWhitelist?apiKey=${apiKey}&chainId=${chainId}`, bodyCheckWhitelist, {headers: headers})
-      console.log('isWhitelisted:', isWhitelisted);
-      console.log('isWhitelisted:', isWhitelisted.data.message);
       
       if(isWhitelisted.data.message !== "Already added") {
         console.log('Whitelisting address');
@@ -266,7 +263,10 @@ const useAirdrop = () => {
         await wait(5000)
         userOpsReceipt = await primeSdk.getUserOpReceipt(uoHash)
       }
-      console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt)
+      const tx = {
+        hash: userOpsReceipt.receipt.transactionHash,
+      }
+      setTx(tx as ContractTransactionResponse)
       setIsLoading(FETCH_STATUS.COMPLETED)
     } catch (error) {
       console.log('error: ', error)
