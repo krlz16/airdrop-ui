@@ -38,7 +38,7 @@ function AirdropDialog({ open, closeDialog }: props) {
     setWalletAddress('');
   }
   return (
-    <BaseDialog open={open} closeDialog={handleCloseDialog} className={`w-[450px] ${isAdmin ? 'h-[410px]' : 'min-h-[360px]'} ${isLoading !== FETCH_STATUS.INIT && 'h-[360px]'}`}>
+    <BaseDialog open={open} closeDialog={handleCloseDialog} className={`w-[450px] h-[330px]`}>
       <div className={`w-full h-full flex flex-col ${!isAdmin && 'pt-4'}`}>
         {
           isAdmin && 

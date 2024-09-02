@@ -27,6 +27,7 @@ function AddAirdropDialog({ open, closeDialog }: props) {
   const [formCompleted, setFormCompleted] = useState<boolean>(true);
   const [createAirdrop, setCreateAirdrop] = useState<ICreateAirdrop>(CREATE_AIRDROP_STATE);
   const [contractAddress, setContractAddress] = useState<string>('');
+  const [gasless, setGasless] = useState<boolean>(false);
 
   useEffect(() => {
     setMenu(isAdmin ? 'add' : 'create');
@@ -189,7 +190,7 @@ function AddAirdropDialog({ open, closeDialog }: props) {
                     <label htmlFor="name" className='font-bold text-base ml-3 mb-1 flex justify-between items-center'>
                       Expiration Date
                       <span className='text-zinc-600 text-xs mr-2'>Time Zone GMT+0</span>
-                      </label>
+                    </label>
                     <Input
                       type='datetime-local'
                       value={createAirdrop.expirationDate}
@@ -199,6 +200,20 @@ function AddAirdropDialog({ open, closeDialog }: props) {
                       placeholder='contract address'
                       height={35}  
                     />
+                  </div>
+                  <div className="w-1/2 p-2">
+                    <label htmlFor="name" className='font-bold text-base ml-3 mb-2 block'>Gasless</label>
+                    <div className='ml-2'>
+                      <label className="flex w-max relative items-center cursor-pointer">
+                        <input
+                          checked={gasless}
+                          type="checkbox"
+                          className="sr-only"
+                          onChange={(e) => setGasless(Boolean(e.target.checked))}
+                        />
+                        <span className="w-9 h-5 bg-card rounded-full border border-input toggle-bg"></span>
+                      </label>
+                    </div>
                   </div>
                 </form>
                 <div className='italic text-red-500 my-2'>

@@ -97,10 +97,10 @@ const useAirdrop = () => {
         }
       }
       const { airdropAmountLeft, totalAirdropAmount } = newAirdrop
-      const progress =
-        (totalAirdropAmount - airdropAmountLeft) / totalAirdropAmount
-      newAirdrop.progress = Math.round(progress * 100)
-      newAirdrop.isExpired = new Date(newAirdrop.expirationDate) < new Date()
+      const progress = (totalAirdropAmount - airdropAmountLeft) / totalAirdropAmount;
+      newAirdrop.progress = Math.round(progress * 100);
+      newAirdrop.isExpired = new Date(newAirdrop.expirationDate) < new Date();
+      newAirdrop.new = new Date(newAirdrop.expirationDate) >= new Date(new Date().setDate(new Date().getDate() - 3));
       airdropsDetail.push(newAirdrop)
     }
     if (airdropManager && address) {
@@ -171,7 +171,7 @@ const useAirdrop = () => {
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET)
       if (gasless) {
-        claimGasless(airdropAddress, amount, proof)
+        await claimGasless(airdropAddress, amount, proof)
       } else {
         const response = await airdropManager?.claim(
           airdropAddress,
@@ -195,7 +195,6 @@ const useAirdrop = () => {
     proof: string[] = []
   ) => {
     try {
-      
       const metamaskProvider = await MetaMaskWalletProvider.connect()
       const bundlerApiKey = BUNDLER_API_KEY
       const customBundlerUrl = CUSTOM_BUNDLER_URL
@@ -271,6 +270,7 @@ const useAirdrop = () => {
       setIsLoading(FETCH_STATUS.COMPLETED)
     } catch (error) {
       console.log('error: ', error)
+      throw new Error('Error GaslessClaimer execution')
     }
   }
 
