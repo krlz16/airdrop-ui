@@ -27,7 +27,6 @@ function AddAirdropDialog({ open, closeDialog }: props) {
   const [formCompleted, setFormCompleted] = useState<boolean>(true);
   const [createAirdrop, setCreateAirdrop] = useState<ICreateAirdrop>(CREATE_AIRDROP_STATE);
   const [contractAddress, setContractAddress] = useState<string>('');
-  const [gasless, setGasless] = useState<boolean>(false);
 
   useEffect(() => {
     setMenu(isAdmin ? 'add' : 'create');
