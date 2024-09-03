@@ -1,19 +1,24 @@
 import React, { useState } from 'react'
 import Button from '../common/Button'
 import Search from './Search'
-import FilterIcon from '../icons/FilterIcon'
 import AddAirdropDialog from '../dialog/AddAirdropDialog'
 import { useAuth } from '@/context/AuthContext'
 
-function Filters() {
+type Props = {
+  filters: string
+  setFilters: Function
+}
+
+function Filters({ filters, setFilters}: Props) {
   const [dialog, setDialog] = useState<boolean>(false);
   const { address } = useAuth();
+
   return (
     <>
       <AddAirdropDialog open={dialog} closeDialog={() => setDialog(false)} />
       <div className="flex justify-between items-center">
         <div className='flex gap-2 justify-between items-center'>
-          <Search />
+          <Search searchValue={filters} setSearchValue={setFilters} />
           {
             address ?
               (<Button
@@ -40,10 +45,10 @@ function Filters() {
               )
           }
         </div>
-        <div className="flex gap-2 items-center">
+        {/* <div className="flex gap-2 items-center ">
           <FilterIcon />
           <span className="text-xl text-white font-medium">Filter By</span>
-        </div>
+        </div> */}
       </div>
     </>
   )
