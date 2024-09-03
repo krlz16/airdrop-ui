@@ -12,15 +12,6 @@ function Hero() {
           <div className='flex-1'>
             <Title />
             <div className='flex justify-between mt-14 items-center'>
-              <Button
-                onClick={undefined}
-                outline
-                rounded
-                variant='secondary'
-                width={190}
-                >
-                Airdrop Section
-              </Button>
               <div className='w-[345px] font-medium'>
                 <span className='bg-custom-orange w-[60px] h-[14px] rounded-full px-1 text-black'>WHAT IS?</span>
                 <p className='mb-3 mt-4'>Welcome to the Runes Giveaway Machine! Airdrop Section, claim unique airdrops on RSK Network</p>
