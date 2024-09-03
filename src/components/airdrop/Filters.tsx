@@ -12,26 +12,37 @@ function Filters() {
     <>
       <AddAirdropDialog open={dialog} closeDialog={() => setDialog(false)} />
       <div className="flex justify-between items-center">
-        <div className='flex gap-2'>
+        <div className='flex gap-2 justify-between items-center'>
           <Search />
           {
-            address &&
-            <Button
-              onClick={() => setDialog(true)}
-              outline
-              rounded
-              variant='secondary'
-              width={170}
-            >
-              <span className='text-xl font-semibold'>Add Airdrop +</span>
-            </Button>
+            address ?
+              (<Button
+                onClick={() => setDialog(true)}
+                outline
+                rounded
+                variant='secondary'
+                width={170}
+              >
+                <span className='text-xl font-semibold'>Add Airdrop +</span>
+              </Button>
+              ) : (
+                <Button
+                  onClick={() => true}
+                  outline
+                  rounded
+                  disabled={true}
+                  variant='secondary'
+                  width={170}
+                  className='cursor-default '
+                >
+                  <span className='text-xl font-semibold'>Add Airdrop +</span>
+                </Button>
+              )
           }
         </div>
-        <div>
-          <div className="flex gap-2 items-center">
-            <FilterIcon />
-            <span className="text-xl text-white font-medium">Filter By</span>
-          </div>
+        <div className="flex gap-2 items-center">
+          <FilterIcon />
+          <span className="text-xl text-white font-medium">Filter By</span>
         </div>
       </div>
     </>
