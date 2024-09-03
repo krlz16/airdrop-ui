@@ -44,15 +44,13 @@ const Button: React.FC<ButtonProps> = ({
 
   const outlineStyles = outline ? 'border' : '';
   const roundedStyles = rounded ? 'rounded-full' : 'rounded';
-  // const isDisabled = disabled ? 'disa'
-
 
   return (
     <button
       disabled={disabled}
       onClick={onClick}
       style={{ width, height }}
-      className={`relative disabled:bg-zinc-800 disabled:border-transparent disabled:text-zinc-300 disabled:cursor-not-allowed disabled:font-medium ${className} ${classNames(
+      className={`relative disabled:bg-zinc-800 disabled:text-zinc-300 disabled:cursor-not-allowed disabled:font-medium ${className} ${classNames(
         baseStyles,
         sizeStyles,
         variantStyles[variant],
@@ -61,7 +59,7 @@ const Button: React.FC<ButtonProps> = ({
       )}
       `}
     >
-      {(outline && !disabled) && (
+      {(outline) && (
         <span
           style={{ width, height }}
           className={`${classNames(

@@ -40,7 +40,6 @@ function AddAirdropDialog({ open, closeDialog }: props) {
     closeDialog();
     setIsLoading(FETCH_STATUS.INIT);
     setContractAddress('');
-    setMenu('add');
     setCreateAirdrop(CREATE_AIRDROP_STATE);
     setFormCompleted(true);
   }
@@ -72,7 +71,7 @@ function AddAirdropDialog({ open, closeDialog }: props) {
     }
   }
   return (
-    <BaseDialog open={open} closeDialog={handleCloseDialog} className={`${menu === 'add' ? 'w-[430px] h-[370px]' : 'w-[700px] h-[500px]'} bg-black border border-zinc-700 transition-all duration-200`}>
+    <BaseDialog open={open} closeDialog={handleCloseDialog} className={`${menu === 'add' ? 'w-[430px] h-[370px]' : 'w-[700px] h-[450px]'} bg-black border border-zinc-700 transition-all duration-200`}>
       <div className='w-full h-full flex flex-col'>
         {
           isAdmin && <ul className='flex gap-4 mb-5'>
@@ -138,7 +137,7 @@ function AddAirdropDialog({ open, closeDialog }: props) {
             initialContent={
               <>
                 <h2 className='bg-custom-green mt-1 font-bold text-xl text-black w-max px-1 items-start'>CREATE AIRDROP</h2>
-                <form className='w-full mt-7 items-center flex flex-wrap'>
+                <form className='w-full mt-9 items-center flex flex-wrap'>
                   <div className='w-1/2 p-1'>
                     <label htmlFor="name" className='font-bold text-base ml-3 mb-1 block'>Airdrop Name</label>
                     <Input
@@ -220,7 +219,7 @@ function AddAirdropDialog({ open, closeDialog }: props) {
                     !formCompleted && 'All fields are required'
                   }
                 </div>
-                <div className='w-full flex mt-4 justify-between'>
+                <div className='w-full flex mt-7 px-2 justify-between'>
                   <Button
                     outline
                     onClick={() => handleCloseDialog()}
@@ -241,7 +240,7 @@ function AddAirdropDialog({ open, closeDialog }: props) {
             }
             status={isLoading}
             loadingTitle='Creating airdrop'
-            createdTitle='AirDrop was Created'
+            createdTitle='Airdrop was Created'
             onClose={() => handleReset()}
             btnError='try again'
           />

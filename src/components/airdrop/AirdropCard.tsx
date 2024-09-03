@@ -21,6 +21,10 @@ type props = {
   airdrop: IAirdrop
 }
 
+ function formatAddress(address: string) {
+  return `${address.slice(0, 4)}...${address.slice(-4)}`
+}
+
 function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false, airdrop, onCloseDialog }: props) {
   const { isAdmin, address, gasless, setGasless } = useAuth();
   const {fetchImage} = useAirdrop();
@@ -141,15 +145,14 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             </section>
           </div>
           <div className='w-1/3 flex justify-between flex-col items-end'>
-            <div className='mt-1 items-center justify-center'>
-              <div className='text-zinc-300 mb-2 group'>
-                <span>{trim1(airdrop.address)}...</span>
-                <span>{trim2(airdrop.address)}</span>
-                <button className="relative w-4" onClick={() => copyAddress(airdrop.address)}>
+            <div className='mt-1'>
+              <div className='text-zinc-300 mb-2 flex justify-between items-center gap-2 '>
+                <div>{formatAddress(airdrop.address)}</div>
+                <button className="relative w-4 h-4" onClick={() => copyAddress(airdrop.address)}>
                   {
                     copied && <span className='absolute -left-4 -top-6 transition-all duration-500'>copied</span>
                   }
-                  <CopyIcon className='group-hover:fill-zinc-200 fill-zinc-400 relative w-5 h-4' />
+                  <CopyIcon className='hover:fill-zinc-200 fill-zinc-400 relative w-4 h-4' />
                 </button>
               </div>
               {imgLink && 
