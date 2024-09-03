@@ -64,6 +64,7 @@ export interface AirdropManagerInterface extends Interface {
       | "disallowAddresses"
       | "getAirdropAmountLeft"
       | "getAirdropInfo"
+      | "getAirdropTokenUri"
       | "getAirdrops"
       | "getBalance"
       | "getClaimAmount"
@@ -123,6 +124,10 @@ export interface AirdropManagerInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAirdropInfo",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAirdropTokenUri",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -203,6 +208,10 @@ export interface AirdropManagerInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getAirdropInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAirdropTokenUri",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -383,6 +392,12 @@ export interface AirdropManager extends BaseContract {
     "view"
   >;
 
+  getAirdropTokenUri: TypedContractMethod<
+    [airdropAddress: AddressLike],
+    [string],
+    "view"
+  >;
+
   getAirdrops: TypedContractMethod<[], [string[]], "view">;
 
   getBalance: TypedContractMethod<
@@ -520,6 +535,9 @@ export interface AirdropManager extends BaseContract {
     [AirdropInfoStructOutput],
     "view"
   >;
+  getFunction(
+    nameOrSignature: "getAirdropTokenUri"
+  ): TypedContractMethod<[airdropAddress: AddressLike], [string], "view">;
   getFunction(
     nameOrSignature: "getAirdrops"
   ): TypedContractMethod<[], [string[]], "view">;

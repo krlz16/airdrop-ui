@@ -60,6 +60,7 @@ export interface OpenAirdropERC20Interface extends Interface {
       | "getBalance"
       | "getClaimAmount"
       | "getExpirationDate"
+      | "getTokenUri"
       | "getTotalAirdropAmount"
       | "hasBalanceToClaim"
       | "hasBeenTotallyClaimed"
@@ -101,6 +102,10 @@ export interface OpenAirdropERC20Interface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getExpirationDate",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenUri",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -153,6 +158,10 @@ export interface OpenAirdropERC20Interface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getExpirationDate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenUri",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -290,6 +299,8 @@ export interface OpenAirdropERC20 extends BaseContract {
 
   getExpirationDate: TypedContractMethod<[], [bigint], "view">;
 
+  getTokenUri: TypedContractMethod<[], [string], "view">;
+
   getTotalAirdropAmount: TypedContractMethod<[], [bigint], "view">;
 
   hasBalanceToClaim: TypedContractMethod<[], [boolean], "view">;
@@ -338,6 +349,9 @@ export interface OpenAirdropERC20 extends BaseContract {
   getFunction(
     nameOrSignature: "getExpirationDate"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getTokenUri"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getTotalAirdropAmount"
   ): TypedContractMethod<[], [bigint], "view">;

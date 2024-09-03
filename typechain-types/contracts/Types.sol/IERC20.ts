@@ -22,18 +22,22 @@ import type {
 } from "../../common";
 
 export interface IERC20Interface extends Interface {
-  getFunction(nameOrSignature: "balanceOf" | "transfer"): FunctionFragment;
+  getFunction(
+    nameOrSignature: "balanceOf" | "getUri" | "transfer"
+  ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "getUri", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transfer",
     values: [AddressLike, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getUri", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
 }
 
@@ -82,6 +86,8 @@ export interface IERC20 extends BaseContract {
 
   balanceOf: TypedContractMethod<[account: AddressLike], [bigint], "view">;
 
+  getUri: TypedContractMethod<[], [string], "view">;
+
   transfer: TypedContractMethod<
     [to: AddressLike, amount: BigNumberish],
     [void],
@@ -95,6 +101,9 @@ export interface IERC20 extends BaseContract {
   getFunction(
     nameOrSignature: "balanceOf"
   ): TypedContractMethod<[account: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getUri"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "transfer"
   ): TypedContractMethod<
