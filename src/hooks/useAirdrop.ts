@@ -6,6 +6,7 @@ import {
   CHAIN_ID,
   CUSTOM_BUNDLER_URL,
   FETCH_STATUS,
+  PINATA_URL,
 } from '@/constants'
 import { useAuth } from '@/context/AuthContext'
 import { IAirdrop, ICreateAirdrop } from '@/interface/IAirdrop'
@@ -116,6 +117,15 @@ const useAirdrop = () => {
     setAirdropLoading(false)
   }, [initializeProvider, setAirdropLoading, setIsAdmin, address, setAirdrops])
 
+  const fetchImage = async (airdropAddress: string) => {
+    try {
+      const airdropManager = await initializeProvider()
+      const imgLink = await airdropManager?.getAirdropTokenUri(airdropAddress)
+      return `${PINATA_URL}${imgLink}`
+    } catch (error) {
+      console.log('error: ', error);
+    }
+  }
   const removeAirdrop = async (airdropAddress: string) => {
     try {
       setIsLoading(FETCH_STATUS.WAIT_WALLET)
@@ -319,7 +329,8 @@ const useAirdrop = () => {
     setIsLoading,
     claim,
     allowedAddress,
-    deployERC20Airdrop
+    deployERC20Airdrop,
+    fetchImage
   }
 }
 

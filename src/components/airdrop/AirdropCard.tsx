@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import CopyIcon from '../icons/CopyIcon'
 import { formatDate } from '@/utils/formatDate'
+import useAirdrop from '@/hooks/useAirdrop'
 type props = {
   background?: string
   dialog?: boolean
@@ -22,8 +23,11 @@ type props = {
 
 function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false, airdrop, onCloseDialog }: props) {
   const { isAdmin, address, gasless, setGasless } = useAuth();
+  const {fetchImage} = useAirdrop();
   const [amount, setAmount] = useState<string>('0');
   const [copied, setCopied] = useState<boolean>(false);
+  const [imgLink, setImgLink] = useState<string | null>(null);
+
   let disabled = false;
   if (address) disabled = !isAdmin ? (!airdrop.isAllowed || airdrop.isClaimed! || airdrop?.isExpired! || airdrop.balance === 0) : false;
   useEffect(() => {
@@ -31,7 +35,14 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
     const claim = MerkleData.claims.find(claim => claim.address.toLowerCase() === address.toLowerCase());
     setAmount(claim?.amount ? ethers.formatUnits(claim?.amount, 18).toString() : '0');
   }, [address, airdrop.airdropType]);
-
+  useEffect(() => {
+    getImageLink();
+  }, [])
+  
+  const getImageLink = async () => {
+    const imageLink = await fetchImage(airdrop.address);
+    setImgLink(imageLink ?? null);
+  }
   const copyAddress = (address: string) => {
     setCopied(true);
     navigator.clipboard.writeText(address)
@@ -130,7 +141,7 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             </section>
           </div>
           <div className='w-1/3 flex justify-between flex-col items-end'>
-            <div className='mt-1'>
+            <div className='mt-1 items-center justify-center'>
               <div className='text-zinc-300 mb-2 group'>
                 <span>{trim1(airdrop.address)}...</span>
                 <span>{trim2(airdrop.address)}</span>
@@ -141,7 +152,13 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
                   <CopyIcon className='group-hover:fill-zinc-200 fill-zinc-400 relative w-5 h-4' />
                 </button>
               </div>
-              <AirdropIcon />
+              {imgLink && 
+                <img
+                  src={imgLink}
+                  alt={`airdrop token logo`}
+                  className="ml-4 w-20 h-20 object-cover rounded-full"
+                />
+              }
             </div>
             <Button
               show={(!dialog || !!address)}
