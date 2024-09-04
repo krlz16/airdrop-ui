@@ -157,12 +157,14 @@ const useAirdrop = () => {
     gasless: boolean = false
   ) => {
     try {
-      setIsLoading(FETCH_STATUS.WAIT_WALLET)
       if (domain) {
-        claimWithRNSDomain(airdropAddress, amount, proof)
+        setIsLoading(FETCH_STATUS.WAIT_SPONSOR)
+        await claimWithRNSDomain(airdropAddress, amount, proof)
       } else if (gasless) {
-        claimGasless(airdropAddress, amount, proof)
+        setIsLoading(FETCH_STATUS.WAIT_SPONSOR)
+        await claimGasless(airdropAddress, amount, proof)
       } else {
+        setIsLoading(FETCH_STATUS.WAIT_WALLET)
         const response = await airdropManager?.claim(
           airdropAddress,
           address,

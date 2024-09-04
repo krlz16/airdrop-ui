@@ -20,12 +20,12 @@ type props = {
 }
 
 function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false, airdrop, onCloseDialog }: props) {
-  const { isAdmin, address, gasless, setGasless } = useAuth();
+  const { isAdmin, address, domain, gasless, setGasless } = useAuth();
   const [amount, setAmount] = useState<string>('0');
   let disabled = false;
   if (address) disabled = !isAdmin ? (!airdrop.isAllowed || airdrop.isClaimed! || airdrop?.isExpired! || airdrop.balance === 0) : false;
   useEffect(() => {
-    if(airdrop.airdropType !== 'merkle') return;
+    if (airdrop.airdropType !== 'merkle') return;
     const claim = MerkleData.claims.find(claim => claim.address.toLowerCase() === address.toLowerCase());
     setAmount(claim?.amount ? ethers.formatUnits(claim?.amount, 18).toString() : '0');
   }, [address])
@@ -85,7 +85,7 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             <section className='w-full mt-2'>
               <div className='flex justify-between'>
                 <h6>Amount to receive</h6>
-                <p>{airdrop.airdropType === 'merkle' ? amount : airdrop.claimAmount }</p>
+                <p>{airdrop.airdropType === 'merkle' ? amount : airdrop.claimAmount}</p>
               </div>
               <div className='flex justify-between mt-2'>
                 <h6>Total available</h6>
@@ -102,24 +102,26 @@ function AirdropCard({ background = 'bg-custom-orange', onClick, dialog = false,
             </section>
           </div>
           <div className='w-1/3 flex justify-between flex-col items-end'>
-            <AirdropIcon />
-            <Button
-              show={(!dialog || !!address)}
-              onClick={onClick}
-              className='self-end !px-0 group'
-              width={dialog ? 76 : 45}
-              outline
-              variant={dialog ? 'secondary' : 'primary'}
-              disabled={disabled}
-            >
-              {
-                dialog
-                  ? 'claim'
-                  : <ArrowRightIcon className={`${disabled ? '' : 'group-hover:fill-black'} fill-white`} />
-              }
-            </Button>
+            <div className="gap-4 flex flex-col">
+              <AirdropIcon />
+              <Button
+                show={(!dialog || !!address)}
+                onClick={onClick}
+                className='self-end !px-0 group'
+                width={dialog ? 76 : 45}
+                outline
+                variant={dialog ? 'secondary' : 'primary'}
+                disabled={disabled}
+              >
+                {
+                  dialog
+                    ? 'claim'
+                    : <ArrowRightIcon className={`${disabled ? '' : 'group-hover:fill-black'} fill-white`} />
+                }
+              </Button>
+            </div>
             {
-              (dialog && address) &&
+              (dialog && address && !domain) &&
               <div className="flex gap-2 items-center">
                 <label htmlFor="">gasless</label>
                 <label className="flex relative items-center cursor-pointer">
