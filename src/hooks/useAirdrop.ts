@@ -17,6 +17,7 @@ import {
   EtherspotBundler,
   MetaMaskWalletProvider,
   PrimeSdk,
+  WalletProviderLike,
 } from '@etherspot/prime-sdk'
 
 import AirdropAdminAbi from '@/utils/abi/AirdropManager.json'
@@ -35,6 +36,7 @@ const useAirdrop = () => {
   const {
     provider,
     address,
+    domain,
     setIsAdmin,
     setTx,
     setAirdropLoading,
@@ -155,10 +157,14 @@ const useAirdrop = () => {
     gasless: boolean = false
   ) => {
     try {
-      setIsLoading(FETCH_STATUS.WAIT_WALLET)
-      if (gasless) {
-        claimGasless(airdropAddress, amount, proof)
+      if (domain) {
+        setIsLoading(FETCH_STATUS.WAIT_SPONSOR)
+        await claimWithRNSDomain(airdropAddress, amount, proof)
+      } else if (gasless) {
+        setIsLoading(FETCH_STATUS.WAIT_SPONSOR)
+        await claimGasless(airdropAddress, amount, proof)
       } else {
+        setIsLoading(FETCH_STATUS.WAIT_WALLET)
         const response = await airdropManager?.claim(
           airdropAddress,
           address,
@@ -175,6 +181,32 @@ const useAirdrop = () => {
       setIsLoading(FETCH_STATUS.ERROR)
     }
   }
+  const claimWithRNSDomain = async (
+    airdropAddress: string,
+    amount: string = '0',
+    proof: string[] = []
+  ) => {
+    try {
+      console.log('claimWithRNSDomain');
+      console.log('airdropAddress:', airdropAddress);
+      console.log('amount:', amount);
+      console.log('proof:', proof);
+      console.log('address:', address);
+      console.log('domain:', domain);
+
+      const wallet = ethers.Wallet.createRandom()
+      const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
+      const connectedWallet = wallet.connect(provider);
+
+      const walletProviderLike: WalletProviderLike = {
+        privateKey: connectedWallet.privateKey
+      }
+
+      await claimSponsored(airdropAddress, amount, proof, walletProviderLike)
+    } catch (error) {
+      console.log('error: ', error)
+    }
+  }
   const claimGasless = async (
     airdropAddress: string,
     amount: string = '0',
@@ -186,24 +218,37 @@ const useAirdrop = () => {
       console.log('amount:', amount);
       console.log('proof:', proof);
       console.log('address:', address);
-      
-      const metamaskProvider = await MetaMaskWalletProvider.connect()
+
+      const walletProviderLike: WalletProviderLike = await MetaMaskWalletProvider.connect()
+
+      await claimSponsored(airdropAddress, amount, proof, walletProviderLike)
+    } catch (error) {
+      console.log('error: ', error)
+    }
+  }
+  const claimSponsored = async (
+    airdropAddress: string,
+    amount: string = '0',
+    proof: string[] = [],
+    walletProviderLike: WalletProviderLike
+  ) => {
+    try {
       const bundlerApiKey = BUNDLER_API_KEY
       const customBundlerUrl = CUSTOM_BUNDLER_URL
       const chainId = Number(CHAIN_ID)
       const airdropManagerAddress = AIRDROP_MANAGER_ADDRESS
       const apiKey = ARKA_PUBLIC_KEY
       if (
-        !metamaskProvider ||
         !bundlerApiKey ||
         !customBundlerUrl ||
         !chainId ||
         !airdropManagerAddress ||
         !apiKey
       ) {
-        throw new Error('Missing data for GaslessClaimer execution')
+        throw new Error('Missing data for RNSDomain claimer execution')
       }
-      const primeSdk = new PrimeSdk(metamaskProvider, {
+
+      const primeSdk = new PrimeSdk(walletProviderLike, {
         chainId: chainId,
         bundlerProvider: new EtherspotBundler(
           chainId,
@@ -211,6 +256,7 @@ const useAirdrop = () => {
           customBundlerUrl
         ),
       })
+
       const smartAddress = await primeSdk.getCounterFactualAddress();
       console.log(`EtherspotWallet address: ${smartAddress}`);
       const balance = await primeSdk.getNativeBalance()
@@ -219,22 +265,22 @@ const useAirdrop = () => {
         airdropManagerAddress,
         AirdropAdminAbi.abi
       )
-      const headers = {'Content-Type': 'application/json'}
+      const headers = { 'Content-Type': 'application/json' }
       const bodyCheckWhitelist = {
         "params": [smartAddress]
       }
-      const isWhitelisted = await axios.post(`https://arka.etherspot.io/checkWhitelist?apiKey=${apiKey}&chainId=${chainId}`, bodyCheckWhitelist, {headers: headers})
+      const isWhitelisted = await axios.post(`https://arka.etherspot.io/checkWhitelist?apiKey=${apiKey}&chainId=${chainId}`, bodyCheckWhitelist, { headers: headers })
       console.log('isWhitelisted:', isWhitelisted);
       console.log('isWhitelisted:', isWhitelisted.data.message);
-      
-      if(isWhitelisted.data.message !== "Already added") {
+
+      if (isWhitelisted.data.message !== "Already added") {
         console.log('Whitelisting address');
         const body = {
           "params": [[smartAddress]]
         }
-        const  responseWhitelist = await axios.post(`https://arka.etherspot.io/whitelist?apiKey=${apiKey}&chainId=${chainId}`, body, {headers: headers})
+        const responseWhitelist = await axios.post(`https://arka.etherspot.io/whitelist?apiKey=${apiKey}&chainId=${chainId}`, body, { headers: headers })
         console.log('responseWhitelist:', responseWhitelist);
-      }      
+      }
       const encodedData = airdropAdminContract.interface.encodeFunctionData(
         'claim',
         [airdropAddress, address, amount, proof]

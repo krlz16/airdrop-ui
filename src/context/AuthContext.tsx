@@ -15,6 +15,8 @@ interface AuthContextType {
   address: string
   logout: () => void
   setAddress: React.Dispatch<React.SetStateAction<string>>
+  domain: string
+  setDomain: React.Dispatch<React.SetStateAction<string>>
   setProvider: React.Dispatch<React.SetStateAction<ethers.BrowserProvider | undefined>>
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>
   isAdmin: boolean
@@ -36,6 +38,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [address, setAddress] = useState<string>('');
+  const [domain, setDomain] = useState<string>('');
   const [airdrop, setAirdrop] = useState<IAirdrop>();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [airdropLoading, setAirdropLoading] = useState<boolean>(false);
@@ -50,6 +53,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const logout = useCallback(() => {
     setProvider(undefined);
     setAddress('');
+    setDomain('');
     setIsAdmin(false);
     setTx(undefined);
   }, [])
@@ -64,6 +68,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         setProvider,
         address,
         setAddress,
+        domain,
+        setDomain,
         airdrop,
         setAirdrop,
         setTx,
