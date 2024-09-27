@@ -66,8 +66,6 @@ const useAirdrop = () => {
     const airdropsDetail: IAirdrop[] = []
     for (const air in items) {
       const detail = await airdropManager?.getAirdropInfo(items[Number(air)])
-      console.log('detail: ', detail)
-
       const newAirdrop: IAirdrop = {
         name: detail![0].toString(),
         address: detail![1].toString(),
@@ -77,13 +75,6 @@ const useAirdrop = () => {
         expirationDate: new Date(parseFloat(detail![5].toString()) * 1000),
         airdropType: Number(ethers.toBigInt(detail[6])) ? 'merkle' : 'custom',
       }
-      console.log(
-        'airdropamount unformatted is ',
-        ethers.formatEther(detail![3])
-      )
-
-      console.log('airdropamount left is', newAirdrop.airdropAmountLeft)
-
       const balance = await airdropManager.getBalance(newAirdrop.address)
       newAirdrop.balance = Number(ethers.formatEther(balance))
       if (address) {

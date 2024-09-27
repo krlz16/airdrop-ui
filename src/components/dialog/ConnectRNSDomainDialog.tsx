@@ -30,13 +30,15 @@ function ConnectRNSDomainDialog({ closeDialog, open }: props) {
       console.log(domain)
     }
   }, [address, domain])
-
-  useEffect(()=> {
-    if(isError) {
-      setIsError(false)
+  useEffect(() => {
+    if(isError){
+      setIsSearching(false)
+      setTimeout(() => {
+        setIsError(false)
+      }, 5000);
     }
   }, [isError])
-
+  
   const handleSubmit = () => {
     // TODO domain validations 
 
@@ -57,7 +59,7 @@ function ConnectRNSDomainDialog({ closeDialog, open }: props) {
     <BaseDialog
       closeDialog={closeDialog}
       open={open}
-      className="w-[500px] h-[350px]"
+      className="w-[500px] min-h-[350px]"
     >
 
       {isSearching ?
@@ -98,6 +100,11 @@ function ConnectRNSDomainDialog({ closeDialog, open }: props) {
                 </span>
               </div>
             </div>
+            {isError && (
+              <div className="text-center text-red-500 font-semibold">
+                Domain not found, try again
+                </div>
+                )}
             <div className='justify-center w-full s flex items-center my-8'>
               <Button
                 variant='primary'
@@ -112,7 +119,7 @@ function ConnectRNSDomainDialog({ closeDialog, open }: props) {
               </Button>
             </div>
             <div className='h-full w-full ml-4 text-zinc-300 font-semibold text-xs '>
-              <span>Don't you have your RNS domain yet? Go to  <a
+              <span>{"Don't you have your RNS domain yet? Go to  "}<a
                 href="https://testnet.manager.rns.rifos.org/"
                 target="_blank"
                 rel="noopener noreferrer"

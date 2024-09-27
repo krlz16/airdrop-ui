@@ -21,7 +21,6 @@ const useConnectRNSDomain = () => {
       setDomain(domain)
       setAddress(web3.utils.toChecksumAddress(addr));
     } catch (error) {
-      console.error('Error searching RNS domain', error)
       setIsError(true)
     }
   }, [])
